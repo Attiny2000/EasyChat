@@ -12,35 +12,52 @@ namespace EasyChat
 {
     public partial class ChatBox : UserControl
     {
+        VScrollBar myScrollBar = null;
+        int lastBottom = 0;
+
         public ChatBox()
         {
-            if (!this.DesignMode) { InitializeComponent(); }
+            InitializeComponent();
 
-            oldBubble.Top = 0 - oldBubble.Height + 10;
+            //myScrollBar = new VScrollBar();
+            //myScrollBar.Height = MessageHistoryPanel.Height;
+            //myScrollBar.Left = MessageHistoryPanel.Width - myScrollBar.Width;
+            //myScrollBar.Top = 0;
+            //myScrollBar.Enabled = false;
+            //MessageHistoryPanel.Controls.Add(myScrollBar);
         }
 
-        Bubble oldBubble = new Bubble();
-
+        private void ChatBox_Load(object sender, EventArgs e)
+        {
+            MessageHistoryPanel.AutoScroll = false;
+            MessageHistoryPanel.VerticalScroll.Enabled = true;
+            MessageHistoryPanel.VerticalScroll.Visible = true;
+            MessageHistoryPanel.AutoScroll = true;
+        }
         public void AddNewIncomingMessage(string message, string time)
         {
-            Bubble bubble = new Bubble(message, time, Bubble.MessageType.In);
-            bubble.Location = bubble1.Location;
-            bubble.Size = bubble1.Size;
-            bubble.Anchor = bubble1.Anchor;
-            bubble.Top = oldBubble.Bottom + 10;
+            IncomingMessageBubble bubble = new IncomingMessageBubble(message, time);
+            bubble.Location = new Point(3, 3);
+            bubble.Size = new Size(510, 68);
+            bubble.Anchor = (AnchorStyles.Top | AnchorStyles.Left);
+            bubble.Top = lastBottom + 10;
             MessageHistoryPanel.Controls.Add(bubble);
-            oldBubble = bubble;
+            ScrollToBottom();
+            lastBottom = bubble.Bottom;
+            //if (MessageHistoryPanel.VerticalScroll.Visible == true) { myScrollBar.Visible = false; }
         }
         public void AddNewOutcomingMessage(string message, string time)
         {
-            Bubble bubble = new Bubble(message, time, Bubble.MessageType.Out);
-            bubble.Location = bubble1.Location;
-            bubble.Left += 20;
-            bubble.Size = bubble1.Size;
-            bubble.Anchor = bubble1.Anchor;
-            bubble.Top = oldBubble.Bottom + 10;
+            OutcomingMessageBubble bubble = new OutcomingMessageBubble(message, time);
+            bubble.Location = new Point(3, 3);
+            bubble.Size = new Size(510, 68);
+            bubble.Anchor = (AnchorStyles.Top | AnchorStyles.Left);
+            bubble.Left += 26;
+            bubble.Top = lastBottom + 10;
             MessageHistoryPanel.Controls.Add(bubble);
-            oldBubble = bubble;
+            ScrollToBottom();
+            lastBottom = bubble.Bottom;
+            //if (MessageHistoryPanel.VerticalScroll.Visible == true) { myScrollBar.Visible = false; }
         }
 
         private void bunifuImageButton1_Click(object sender, EventArgs e)
@@ -48,7 +65,46 @@ namespace EasyChat
             AddNewOutcomingMessage("Hello, that's test for dynamic rendreing message bubbles.", DateTime.Now.ToString() + " ");
             AddNewIncomingMessage("Ok, here is short message and message with long text", DateTime.Now.ToString() + " ");
             AddNewIncomingMessage("Instant messaging (IM) technology is a type of online chat that offers real-time text transmission over the Internet. A LAN messenger operates in a similar way over a local area network. Short messages are typically transmitted between two parties, when each user chooses to complete a thought and select \"send\".", DateTime.Now.ToString() + " ");
-            MessageHistoryPanel.VerticalScroll.Value = MessageHistoryPanel.VerticalScroll.Maximum;
+        }
+
+        public void ScrollToBottom()
+        {
+            Panel p = this.MessageHistoryPanel;
+            using (Control c = new Control() { Parent = p, Dock = DockStyle.Bottom })
+            {
+                p.ScrollControlIntoView(c);
+                c.Parent = null;
+            }
+        }
+
+        private void bunifuCustomTextbox1_Enter(object sender, EventArgs e)
+        {
+            if (bunifuCustomTextbox1.Text == "Write your message here")
+            {
+                bunifuCustomTextbox1.Text = "";
+                bunifuCustomTextbox1.ForeColor = Color.Black;
+            }
+        }
+
+        private void bunifuCustomTextbox1_Leave(object sender, EventArgs e)
+        {
+            if (bunifuCustomTextbox1.Text == "")
+            {
+                bunifuCustomTextbox1.Text = "Write your message here";
+                bunifuCustomTextbox1.ForeColor = Color.FromArgb(149, 148, 150);
+            }
+        }
+
+        private void bunifuCustomTextbox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!(e.KeyCode == Keys.Enter && Control.ModifierKeys == Keys.Control))
+                if (e.KeyCode == Keys.Enter)
+                {
+                    //TODO
+                    bunifuCustomTextbox1.Text = "";
+                    e.SuppressKeyPress = true;
+                    e.Handled = true;
+                }
         }
     }
 }

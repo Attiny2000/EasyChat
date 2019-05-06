@@ -26,5 +26,15 @@ namespace EasyChat
         {
             this.WindowState = FormWindowState.Minimized;
         }
+
+        private void bunifuImageButton4_Click(object sender, EventArgs e)
+        {
+            //Chat settings
+        }
+
+        private void bunifuImageButton3_Click(object sender, EventArgs e)
+        {
+            //Add chat
+        }
     }
 }

@@ -63,15 +63,6 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="MetroFramework, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
-      <HintPath>..\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="MetroFramework.Design, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
-      <HintPath>..\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.Design.dll</HintPath>
-    </Reference>
-    <Reference Include="MetroFramework.Fonts, Version=1.4.0.0, Culture=neutral, PublicKeyToken=5f91a84759bf584a, processorArchitecture=MSIL">
-      <HintPath>..\packages\MetroModernUI.1.4.0.0\lib\net\MetroFramework.Fonts.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -86,11 +77,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bubble.cs">
+    <Compile Include="ChatList.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Bubble.Designer.cs">
-      <DependentUpon>Bubble.cs</DependentUpon>
+    <Compile Include="ChatList.Designer.cs">
+      <DependentUpon>ChatList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OutcomingMessageBubble.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="OutcomingMessageBubble.Designer.cs">
+      <DependentUpon>OutcomingMessageBubble.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IncomingMessageBubble.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="IncomingMessageBubble.Designer.cs">
+      <DependentUpon>IncomingMessageBubble.cs</DependentUpon>
     </Compile>
     <Compile Include="ChatBox.cs">
       <SubType>UserControl</SubType>
@@ -110,10 +113,20 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\ChatRoom.cs" />
+    <Compile Include="Model\DataContext.cs" />
+    <Compile Include="Model\Message.cs" />
+    <Compile Include="Model\User.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Bubble.resx">
-      <DependentUpon>Bubble.cs</DependentUpon>
+    <EmbeddedResource Include="ChatList.resx">
+      <DependentUpon>ChatList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OutcomingMessageBubble.resx">
+      <DependentUpon>OutcomingMessageBubble.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IncomingMessageBubble.resx">
+      <DependentUpon>IncomingMessageBubble.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ChatBox.resx">
       <DependentUpon>ChatBox.cs</DependentUpon>
@@ -145,7 +158,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />

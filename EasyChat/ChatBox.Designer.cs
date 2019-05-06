@@ -29,26 +29,41 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChatBox));
-            this.InputMessagePanel = new System.Windows.Forms.Panel();
-            this.bunifuImageButton1 = new Bunifu.Framework.UI.BunifuImageButton();
-            this.metroTextBox1 = new MetroFramework.Controls.MetroTextBox();
             this.MessageHistoryPanel = new System.Windows.Forms.Panel();
-            this.bubble1 = new EasyChat.Bubble();
-            this.InputMessagePanel.SuspendLayout();
+            this.bunifuCustomTextbox1 = new WindowsFormsControlLibrary1.BunifuCustomTextbox();
+            this.bunifuImageButton1 = new Bunifu.Framework.UI.BunifuImageButton();
+            this.InputMessagePanel = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.bunifuImageButton1)).BeginInit();
-            this.MessageHistoryPanel.SuspendLayout();
+            this.InputMessagePanel.SuspendLayout();
             this.SuspendLayout();
             // 
-            // InputMessagePanel
+            // MessageHistoryPanel
             // 
-            this.InputMessagePanel.BackColor = System.Drawing.Color.LightGray;
-            this.InputMessagePanel.Controls.Add(this.bunifuImageButton1);
-            this.InputMessagePanel.Controls.Add(this.metroTextBox1);
-            this.InputMessagePanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.InputMessagePanel.Location = new System.Drawing.Point(0, 360);
-            this.InputMessagePanel.Name = "InputMessagePanel";
-            this.InputMessagePanel.Size = new System.Drawing.Size(559, 50);
-            this.InputMessagePanel.TabIndex = 0;
+            this.MessageHistoryPanel.AutoScroll = true;
+            this.MessageHistoryPanel.BackColor = System.Drawing.Color.LightGray;
+            this.MessageHistoryPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.MessageHistoryPanel.Location = new System.Drawing.Point(0, 0);
+            this.MessageHistoryPanel.Name = "MessageHistoryPanel";
+            this.MessageHistoryPanel.Size = new System.Drawing.Size(559, 360);
+            this.MessageHistoryPanel.TabIndex = 1;
+            // 
+            // bunifuCustomTextbox1
+            // 
+            this.bunifuCustomTextbox1.BackColor = System.Drawing.Color.White;
+            this.bunifuCustomTextbox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(130)))), ((int)(((byte)(182)))));
+            this.bunifuCustomTextbox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+            this.bunifuCustomTextbox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(149)))), ((int)(((byte)(148)))), ((int)(((byte)(150)))));
+            this.bunifuCustomTextbox1.Location = new System.Drawing.Point(3, 3);
+            this.bunifuCustomTextbox1.Multiline = true;
+            this.bunifuCustomTextbox1.Name = "bunifuCustomTextbox1";
+            this.bunifuCustomTextbox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.bunifuCustomTextbox1.Size = new System.Drawing.Size(506, 44);
+            this.bunifuCustomTextbox1.TabIndex = 4;
+            this.bunifuCustomTextbox1.TabStop = false;
+            this.bunifuCustomTextbox1.Text = "Write your message here";
+            this.bunifuCustomTextbox1.Enter += new System.EventHandler(this.bunifuCustomTextbox1_Enter);
+            this.bunifuCustomTextbox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.bunifuCustomTextbox1_KeyDown);
+            this.bunifuCustomTextbox1.Leave += new System.EventHandler(this.bunifuCustomTextbox1_Leave);
             // 
             // bunifuImageButton1
             // 
@@ -65,68 +80,16 @@
             this.bunifuImageButton1.Zoom = 10;
             this.bunifuImageButton1.Click += new System.EventHandler(this.bunifuImageButton1_Click);
             // 
-            // metroTextBox1
+            // InputMessagePanel
             // 
-            this.metroTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.metroTextBox1.BackColor = System.Drawing.Color.White;
-            // 
-            // 
-            // 
-            this.metroTextBox1.CustomButton.Image = null;
-            this.metroTextBox1.CustomButton.Location = new System.Drawing.Point(464, 2);
-            this.metroTextBox1.CustomButton.Name = "";
-            this.metroTextBox1.CustomButton.Size = new System.Drawing.Size(39, 39);
-            this.metroTextBox1.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTextBox1.CustomButton.TabIndex = 1;
-            this.metroTextBox1.CustomButton.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTextBox1.CustomButton.UseSelectable = true;
-            this.metroTextBox1.CustomButton.Visible = false;
-            this.metroTextBox1.FontSize = MetroFramework.MetroTextBoxSize.Medium;
-            this.metroTextBox1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.metroTextBox1.Icon = ((System.Drawing.Image)(resources.GetObject("metroTextBox1.Icon")));
-            this.metroTextBox1.IconRight = true;
-            this.metroTextBox1.Lines = new string[0];
-            this.metroTextBox1.Location = new System.Drawing.Point(3, 3);
-            this.metroTextBox1.MaxLength = 32767;
-            this.metroTextBox1.Multiline = true;
-            this.metroTextBox1.Name = "metroTextBox1";
-            this.metroTextBox1.PasswordChar = '\0';
-            this.metroTextBox1.PromptText = "Write your message here";
-            this.metroTextBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.metroTextBox1.SelectedText = "";
-            this.metroTextBox1.SelectionLength = 0;
-            this.metroTextBox1.SelectionStart = 0;
-            this.metroTextBox1.ShortcutsEnabled = true;
-            this.metroTextBox1.Size = new System.Drawing.Size(506, 44);
-            this.metroTextBox1.Style = MetroFramework.MetroColorStyle.Blue;
-            this.metroTextBox1.TabIndex = 2;
-            this.metroTextBox1.TabStop = false;
-            this.metroTextBox1.Theme = MetroFramework.MetroThemeStyle.Light;
-            this.metroTextBox1.UseSelectable = true;
-            this.metroTextBox1.WaterMark = "Write your message here";
-            this.metroTextBox1.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.metroTextBox1.WaterMarkFont = new System.Drawing.Font("Century", 11F);
-            // 
-            // MessageHistoryPanel
-            // 
-            this.MessageHistoryPanel.AutoScroll = true;
-            this.MessageHistoryPanel.BackColor = System.Drawing.Color.LightGray;
-            this.MessageHistoryPanel.Controls.Add(this.bubble1);
-            this.MessageHistoryPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MessageHistoryPanel.Location = new System.Drawing.Point(0, 0);
-            this.MessageHistoryPanel.Name = "MessageHistoryPanel";
-            this.MessageHistoryPanel.Size = new System.Drawing.Size(559, 360);
-            this.MessageHistoryPanel.TabIndex = 1;
-            // 
-            // bubble1
-            // 
-            this.bubble1.BackColor = System.Drawing.Color.DimGray;
-            this.bubble1.Location = new System.Drawing.Point(8, 3);
-            this.bubble1.Name = "bubble1";
-            this.bubble1.Size = new System.Drawing.Size(510, 71);
-            this.bubble1.TabIndex = 0;
-            this.bubble1.Visible = false;
+            this.InputMessagePanel.BackColor = System.Drawing.Color.LightGray;
+            this.InputMessagePanel.Controls.Add(this.bunifuCustomTextbox1);
+            this.InputMessagePanel.Controls.Add(this.bunifuImageButton1);
+            this.InputMessagePanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.InputMessagePanel.Location = new System.Drawing.Point(0, 360);
+            this.InputMessagePanel.Name = "InputMessagePanel";
+            this.InputMessagePanel.Size = new System.Drawing.Size(559, 50);
+            this.InputMessagePanel.TabIndex = 2;
             // 
             // ChatBox
             // 
@@ -136,19 +99,18 @@
             this.Controls.Add(this.InputMessagePanel);
             this.Name = "ChatBox";
             this.Size = new System.Drawing.Size(559, 410);
-            this.InputMessagePanel.ResumeLayout(false);
+            this.Load += new System.EventHandler(this.ChatBox_Load);
             ((System.ComponentModel.ISupportInitialize)(this.bunifuImageButton1)).EndInit();
-            this.MessageHistoryPanel.ResumeLayout(false);
+            this.InputMessagePanel.ResumeLayout(false);
+            this.InputMessagePanel.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Panel InputMessagePanel;
         private System.Windows.Forms.Panel MessageHistoryPanel;
-        private MetroFramework.Controls.MetroTextBox metroTextBox1;
+        private System.Windows.Forms.Panel InputMessagePanel;
+        private WindowsFormsControlLibrary1.BunifuCustomTextbox bunifuCustomTextbox1;
         private Bunifu.Framework.UI.BunifuImageButton bunifuImageButton1;
-        private Bubble bubble1;
     }
 }
