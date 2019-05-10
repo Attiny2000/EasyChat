@@ -37,6 +37,7 @@
             this.bunifuDragControl1 = new Bunifu.Framework.UI.BunifuDragControl(this.components);
             this.bunifuElipse1 = new Bunifu.Framework.UI.BunifuElipse(this.components);
             this.HeadPanel = new System.Windows.Forms.Panel();
+            this.onlineStatusImage = new System.Windows.Forms.PictureBox();
             this.bunifuImageButton4 = new Bunifu.Framework.UI.BunifuImageButton();
             this.bunifuCustomLabel1 = new Bunifu.Framework.UI.BunifuCustomLabel();
             this.SearchPanel = new System.Windows.Forms.Panel();
@@ -51,6 +52,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.bunifuImageButton2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bunifuImageButton1)).BeginInit();
             this.HeadPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.onlineStatusImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bunifuImageButton4)).BeginInit();
             this.SearchPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bunifuImageButton3)).BeginInit();
@@ -126,6 +128,7 @@
             // HeadPanel
             // 
             this.HeadPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(130)))), ((int)(((byte)(182)))));
+            this.HeadPanel.Controls.Add(this.onlineStatusImage);
             this.HeadPanel.Controls.Add(this.bunifuImageButton4);
             this.HeadPanel.Controls.Add(this.bunifuCustomLabel1);
             this.HeadPanel.Controls.Add(this.SearchPanel);
@@ -134,6 +137,17 @@
             this.HeadPanel.Name = "HeadPanel";
             this.HeadPanel.Size = new System.Drawing.Size(800, 50);
             this.HeadPanel.TabIndex = 2;
+            // 
+            // onlineStatusImage
+            // 
+            this.onlineStatusImage.BackColor = System.Drawing.Color.Transparent;
+            this.onlineStatusImage.Image = global::EasyChat.Properties.Resources.offline_icon_S;
+            this.onlineStatusImage.Location = new System.Drawing.Point(246, 8);
+            this.onlineStatusImage.Name = "onlineStatusImage";
+            this.onlineStatusImage.Size = new System.Drawing.Size(34, 34);
+            this.onlineStatusImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.onlineStatusImage.TabIndex = 3;
+            this.onlineStatusImage.TabStop = false;
             // 
             // bunifuImageButton4
             // 
@@ -155,7 +169,7 @@
             this.bunifuCustomLabel1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bunifuCustomLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
             this.bunifuCustomLabel1.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.bunifuCustomLabel1.Location = new System.Drawing.Point(250, 15);
+            this.bunifuCustomLabel1.Location = new System.Drawing.Point(281, 15);
             this.bunifuCustomLabel1.Name = "bunifuCustomLabel1";
             this.bunifuCustomLabel1.Size = new System.Drawing.Size(143, 20);
             this.bunifuCustomLabel1.TabIndex = 1;
@@ -263,6 +277,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.bunifuImageButton1)).EndInit();
             this.HeadPanel.ResumeLayout(false);
             this.HeadPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.onlineStatusImage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bunifuImageButton4)).EndInit();
             this.SearchPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bunifuImageButton3)).EndInit();
@@ -289,6 +304,7 @@
         private Bunifu.Framework.UI.BunifuCustomLabel bunifuCustomLabel1;
         private ChatList chatList1;
         private System.Windows.Forms.Panel panel1;
-        private ChatBox chatBox1;
+        public ChatBox chatBox1;
+        public System.Windows.Forms.PictureBox onlineStatusImage;
     }
 }

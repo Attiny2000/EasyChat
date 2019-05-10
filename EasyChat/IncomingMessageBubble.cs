@@ -35,23 +35,21 @@ namespace EasyChat
             MessageLabel.Text = message;
             TimeLablel.Text = time;
 
-            Setheight();
+            SetHeight();
         }
-
-        void Setheight()
+        void SetHeight()
         {
-            Size maxSize = new Size(500, int.MaxValue);
-            Graphics g = CreateGraphics();
-            SizeF size = g.MeasureString(MessageLabel.Text, MessageLabel.Font, MessageLabel.Width);
-           
-            MessageLabel.Height = int.Parse(Math.Round(size.Height + 10, 0).ToString());
+            Size maxSize = new Size(MessageLabel.Width, int.MaxValue);
+            MessageLabel.MaximumSize = maxSize;
+            SizeF size = TextRenderer.MeasureText(MessageLabel.Text, MessageLabel.Font, maxSize, TextFormatFlags.WordBreak);
+
+            MessageLabel.Height = int.Parse(Math.Ceiling((double)size.Height + 5).ToString());
             TimeLablel.Top = MessageLabel.Bottom + 5;
             this.Height = TimeLablel.Bottom + 5;
         }
-
         private void bubble_Resize(object sender, EventArgs e)
         {
-            Setheight();
+            SetHeight();
         }
     }
 }

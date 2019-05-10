@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace EasyChat
+namespace EasyChatServer
 {
     public class Message
     {

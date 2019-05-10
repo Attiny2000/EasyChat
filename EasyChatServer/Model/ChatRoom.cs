@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace EasyChat
+namespace EasyChatServer
 {
     public class ChatRoom
     {
         [Key]
         public int ChatRoomId { get; set; }
-        [Required]
-        [MaxLength(20)]
+        [Index(IsUnique = true)]
+        [StringLength(24)]
         public string Name { get; set; }
         public ICollection<User> MembersArray { get; set; }
         public ChatRoom()

@@ -1,4 +1,4 @@
-﻿namespace EasyChat
+﻿namespace EasyChatServer
 {
     using System;
     using System.Data.Entity;

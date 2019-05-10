@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChatBox));
             this.MessageHistoryPanel = new System.Windows.Forms.Panel();
-            this.bunifuCustomTextbox1 = new WindowsFormsControlLibrary1.BunifuCustomTextbox();
+            this.messageTextBox = new WindowsFormsControlLibrary1.BunifuCustomTextbox();
             this.bunifuImageButton1 = new Bunifu.Framework.UI.BunifuImageButton();
             this.InputMessagePanel = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.bunifuImageButton1)).BeginInit();
@@ -47,23 +47,23 @@
             this.MessageHistoryPanel.Size = new System.Drawing.Size(559, 360);
             this.MessageHistoryPanel.TabIndex = 1;
             // 
-            // bunifuCustomTextbox1
+            // messageTextBox
             // 
-            this.bunifuCustomTextbox1.BackColor = System.Drawing.Color.White;
-            this.bunifuCustomTextbox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(130)))), ((int)(((byte)(182)))));
-            this.bunifuCustomTextbox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
-            this.bunifuCustomTextbox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(149)))), ((int)(((byte)(148)))), ((int)(((byte)(150)))));
-            this.bunifuCustomTextbox1.Location = new System.Drawing.Point(3, 3);
-            this.bunifuCustomTextbox1.Multiline = true;
-            this.bunifuCustomTextbox1.Name = "bunifuCustomTextbox1";
-            this.bunifuCustomTextbox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.bunifuCustomTextbox1.Size = new System.Drawing.Size(506, 44);
-            this.bunifuCustomTextbox1.TabIndex = 4;
-            this.bunifuCustomTextbox1.TabStop = false;
-            this.bunifuCustomTextbox1.Text = "Write your message here";
-            this.bunifuCustomTextbox1.Enter += new System.EventHandler(this.bunifuCustomTextbox1_Enter);
-            this.bunifuCustomTextbox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.bunifuCustomTextbox1_KeyDown);
-            this.bunifuCustomTextbox1.Leave += new System.EventHandler(this.bunifuCustomTextbox1_Leave);
+            this.messageTextBox.BackColor = System.Drawing.Color.White;
+            this.messageTextBox.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(57)))), ((int)(((byte)(130)))), ((int)(((byte)(182)))));
+            this.messageTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+            this.messageTextBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(149)))), ((int)(((byte)(148)))), ((int)(((byte)(150)))));
+            this.messageTextBox.Location = new System.Drawing.Point(3, 3);
+            this.messageTextBox.Multiline = true;
+            this.messageTextBox.Name = "messageTextBox";
+            this.messageTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.messageTextBox.Size = new System.Drawing.Size(506, 44);
+            this.messageTextBox.TabIndex = 4;
+            this.messageTextBox.TabStop = false;
+            this.messageTextBox.Text = "Write your message here";
+            this.messageTextBox.Enter += new System.EventHandler(this.bunifuCustomTextbox1_Enter);
+            this.messageTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.bunifuCustomTextbox1_KeyDown);
+            this.messageTextBox.Leave += new System.EventHandler(this.bunifuCustomTextbox1_Leave);
             // 
             // bunifuImageButton1
             // 
@@ -83,7 +83,7 @@
             // InputMessagePanel
             // 
             this.InputMessagePanel.BackColor = System.Drawing.Color.LightGray;
-            this.InputMessagePanel.Controls.Add(this.bunifuCustomTextbox1);
+            this.InputMessagePanel.Controls.Add(this.messageTextBox);
             this.InputMessagePanel.Controls.Add(this.bunifuImageButton1);
             this.InputMessagePanel.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.InputMessagePanel.Location = new System.Drawing.Point(0, 360);
@@ -110,7 +110,7 @@
         #endregion
         private System.Windows.Forms.Panel MessageHistoryPanel;
         private System.Windows.Forms.Panel InputMessagePanel;
-        private WindowsFormsControlLibrary1.BunifuCustomTextbox bunifuCustomTextbox1;
         private Bunifu.Framework.UI.BunifuImageButton bunifuImageButton1;
+        private WindowsFormsControlLibrary1.BunifuCustomTextbox messageTextBox;
     }
 }

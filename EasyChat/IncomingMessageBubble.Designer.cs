@@ -47,9 +47,9 @@ namespace EasyChat
             | System.Windows.Forms.AnchorStyles.Right)));
             this.MessageLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
             this.MessageLabel.ForeColor = System.Drawing.Color.White;
-            this.MessageLabel.Location = new System.Drawing.Point(71, 7);
+            this.MessageLabel.Location = new System.Drawing.Point(62, 7);
             this.MessageLabel.Name = "MessageLabel";
-            this.MessageLabel.Size = new System.Drawing.Size(436, 41);
+            this.MessageLabel.Size = new System.Drawing.Size(443, 41);
             this.MessageLabel.TabIndex = 0;
             this.MessageLabel.Text = "Message";
             // 
@@ -58,12 +58,13 @@ namespace EasyChat
             this.TimeLablel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.TimeLablel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
             this.TimeLablel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.TimeLablel.Location = new System.Drawing.Point(71, 48);
+            this.TimeLablel.Location = new System.Drawing.Point(62, 51);
             this.TimeLablel.Name = "TimeLablel";
-            this.TimeLablel.Size = new System.Drawing.Size(436, 23);
+            this.TimeLablel.Size = new System.Drawing.Size(444, 20);
             this.TimeLablel.TabIndex = 1;
             this.TimeLablel.Text = "5/01/2019 00:00 PM";
             this.TimeLablel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.TimeLablel.Resize += new System.EventHandler(this.bubble_Resize);
             // 
             // bunifuElipse1
             // 
@@ -75,9 +76,9 @@ namespace EasyChat
             this.pictureBox1.ErrorImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.ErrorImage")));
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
-            this.pictureBox1.Location = new System.Drawing.Point(4, 3);
+            this.pictureBox1.Location = new System.Drawing.Point(2, 3);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(60, 60);
+            this.pictureBox1.Size = new System.Drawing.Size(54, 54);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
@@ -88,7 +89,7 @@ namespace EasyChat
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(68, 71);
+            this.panel1.Size = new System.Drawing.Size(59, 71);
             this.panel1.TabIndex = 3;
             // 
             // IncomingMessageBubble

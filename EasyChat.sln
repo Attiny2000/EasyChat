@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28010.2041
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyChat", "EasyChat\EasyChat.csproj", "{673C7185-8408-4B31-9F6E-C149544567FC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyChatServer", "EasyChatServer\EasyChatServer.csproj", "{4BFDAD01-0B87-4C58-B701-967CC0981E48}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{673C7185-8408-4B31-9F6E-C149544567FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{673C7185-8408-4B31-9F6E-C149544567FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{673C7185-8408-4B31-9F6E-C149544567FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BFDAD01-0B87-4C58-B701-967CC0981E48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BFDAD01-0B87-4C58-B701-967CC0981E48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BFDAD01-0B87-4C58-B701-967CC0981E48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BFDAD01-0B87-4C58-B701-967CC0981E48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
