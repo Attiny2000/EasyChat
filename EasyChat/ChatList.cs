@@ -95,7 +95,7 @@ namespace EasyChat
                 activeButton.selected = true;
 
                 mainForm.serverConnection.SendLine("ConnectChat:" + activeButton.Text.Replace(" ", ""));
-                //mainForm.serverConnection.startListen();
+                mainForm.serverConnection.startListen();
                 mainForm.onlineStatusImage.Image = Properties.Resources.online_icon_S;
             }
             else
@@ -104,7 +104,7 @@ namespace EasyChat
                 activeButton = (BunifuFlatButton)sender;
                 activeButton.selected = true;
                 mainForm.serverConnection.SendLine("ConnectChat:" + activeButton.Text.Replace(" ", ""));
-                //mainForm.serverConnection.startListen();
+                mainForm.serverConnection.startListen();
                 mainForm.onlineStatusImage.Image = Properties.Resources.online_icon_S;
             }
         }

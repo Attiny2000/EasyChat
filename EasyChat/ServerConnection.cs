@@ -70,7 +70,22 @@ namespace EasyChat
                     catch (Exception) { MessageBox.Show("Server does't respond", "Server error", MessageBoxButtons.OK, MessageBoxIcon.Error); return false; }
                 }).Result;
         }
-        public async void SendLine(string message)
+        public async void SendLine(string line)
+        {
+            await Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    if (client != null && client.Connected && !string.IsNullOrWhiteSpace(line))
+                    {
+                        sw.WriteLine(line);
+                        //mainForm.chatBox1.AddNewOutcomingMessage(message, DateTime.Now.ToString());
+                    }
+                }
+                catch (Exception ex) { MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+            });
+        }
+        public async void SendMessage(string message)
         {
             await Task.Factory.StartNew(() =>
             {
@@ -78,8 +93,9 @@ namespace EasyChat
                 {
                     if (client != null && client.Connected && !string.IsNullOrWhiteSpace(message))
                     {
-                        sw.WriteLine(message);
-                        //mainForm.chatBox1.AddNewOutcomingMessage(message, DateTime.Now.ToString());
+                        sw.Write(message);
+                        Debug.WriteLine("here");
+                        mainForm.chatBox1.AddNewOutcomingMessage(message, DateTime.Now.ToString());
                     }
                 }
                 catch (Exception ex) { MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
@@ -95,9 +111,9 @@ namespace EasyChat
                     {
                         if (client != null && client.Connected && isClientConnected())
                         {
-                                string line = sr.ReadLine();
-                                if (line != null)
-                                    mainForm.chatBox1.AddNewIncomingMessage(line, DateTime.Now.ToString());
+                                string message = sr.ReadToEnd();
+                                if (message != null)
+                                    mainForm.chatBox1.AddNewIncomingMessage(message, DateTime.Now.ToString());
                         }
                         Task.Delay(100).Wait();
                     }

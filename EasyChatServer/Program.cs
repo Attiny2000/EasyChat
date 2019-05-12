@@ -83,7 +83,7 @@ namespace EasyChatServer
                                     db.SaveChanges();
                                     sw.WriteLine("Succes");
                                     clients.Add(client);
-                                    Console.WriteLine(login + " registred");
+                                    Console.WriteLine("[" + DateTime.Now.ToString() + "] " + login + " registred");
                                 }
                                 else
                                 {
@@ -110,7 +110,7 @@ namespace EasyChatServer
                                         sw.WriteLine("Succes");
                                         client = new ConnectedClient(user, tcpClient);
                                         clients.Add(client);
-                                        Console.WriteLine(login + " logined");
+                                        Console.WriteLine("[" + DateTime.Now.ToString() + "] " + login + " logined");
                                     }
                                     else
                                     {
@@ -141,7 +141,7 @@ namespace EasyChatServer
                                     chat.First().AddNewActiveMember(client);
                                     chat.First().chatRoom.MembersArray.Add(client.User);
                                     db.SaveChanges();
-                                    Console.WriteLine(client.User.Login + " connected to " + line);
+                                    Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " connected to " + line);
                                 }
                                 else
                                 {
@@ -156,8 +156,8 @@ namespace EasyChatServer
                                     if (client.currentChatRoomWorker != null)
                                         client.currentChatRoomWorker.RemoveActiveMember(client);
                                     chatRoomWorker.AddNewActiveMember(client);
-                                    Console.WriteLine("ChatRoom " + line + " created");
-                                    Console.WriteLine(client.User.Login + " connected to " + line);
+                                    Console.WriteLine("[" + DateTime.Now.ToString() + "] " + "ChatRoom " + line + " created");
+                                    Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " connected to " + line);
                                 }
                             }
                             else if (line == "[getServerInfo]MyChatList")
@@ -187,7 +187,7 @@ namespace EasyChatServer
                             }
                         }
                     }
-                    catch (Exception ex) { Console.WriteLine(ex.Message); }
+                    catch (Exception ex) { Console.WriteLine("[" + DateTime.Now.ToString() + "] " + ex.Message); }
                 }
             });
         }

@@ -29,7 +29,8 @@ namespace EasyChatServer
                     StreamReader sr = new StreamReader(client.TcpClient.GetStream());
                     while (client.TcpClient.Connected && isClientConnected(client.TcpClient))
                     {
-                        string message = sr.ReadLine();
+                        string message = sr.ReadToEnd();
+                        Console.WriteLine(message);
                         if (!string.IsNullOrWhiteSpace(message))
                         {
                             SendToAll(message);
@@ -54,8 +55,8 @@ namespace EasyChatServer
                         if (c.TcpClient.Connected && isClientConnected(c.TcpClient))
                         {
                             StreamWriter sw = new StreamWriter(c.TcpClient.GetStream());
-                            sw.AutoFlush = true;
-                            sw.WriteLine(message);
+                            sw.Write(message);
+                            sw.Flush();
                         }
                         else
                         {

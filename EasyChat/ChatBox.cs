@@ -67,7 +67,7 @@ namespace EasyChat
         {
             if (messageTextBox.Text != "" && messageTextBox.Text != "Write your message here")
             {
-                mainForm.serverConnection.SendLine(messageTextBox.Text);
+                mainForm.serverConnection.SendMessage(messageTextBox.Text);
                 messageTextBox.Text = "";
             }
         }
