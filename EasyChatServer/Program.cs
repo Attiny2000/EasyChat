@@ -16,6 +16,11 @@ namespace EasyChatServer
 {
     class Program
     {
+        static List<ConnectedClient> clients = new List<ConnectedClient>();
+        static List<ChatRoomWorker> chatRoomWorkers = new List<ChatRoomWorker>();
+        static TcpListener listener = new TcpListener(IPAddress.Any, 5050);
+        static Regex loginString = new Regex(@"Login:[a-zA-Z0-9]{1,24};Password:[a-zA-Z0-9]{1,24};");
+        static Regex selectChatString = new Regex(@"^ConnectChat:[a-zA-Z0-9]{1,24}$");
         public static void Main(string[] args)
         {
             //Data base load
@@ -29,24 +34,36 @@ namespace EasyChatServer
             db.Users.Include(u => u.ChatRooms).Load();
             db.ChatRooms.Include(u => u.MembersArray).Load();
             db.Messages.Load();
-            List<ConnectedClient> clients = new List<ConnectedClient>();
+            //Chats creation;
+            foreach(ChatRoom chat in db.ChatRooms)
+            {
+                ChatRoomWorker chatRoomWorker = new ChatRoomWorker(chat);
+                chatRoomWorkers.Add(chatRoomWorker);
+            }
             //TCP listener
-            TcpListener listener = new TcpListener(IPAddress.Any, 5050);
-            Regex regex = new Regex(@"Login:\S{1,24};Password:\S{1,24};");
-            TcpClient client;
             listener.Start();
             while (true)
             {
-                client = listener.AcceptTcpClient();
-                StreamReader sr = new StreamReader(client.GetStream());
-                while (client.Connected && isClientConnected(client))
+                TcpClient tcpClient = listener.AcceptTcpClient();
+                ClientListener(tcpClient, db);
+            }
+        }
+
+        static async void ClientListener(TcpClient tcpClient, DataContext db)
+        {
+            await Task.Factory.StartNew(() =>
+            {
+                ConnectedClient client = null;
+                StreamReader sr = new StreamReader(tcpClient.GetStream());
+                while (tcpClient.Connected)
                 {
                     try
                     {
                         string line = sr.ReadLine();
+                        Console.WriteLine(line);
                         string login = "";
                         string password = "";
-                        if (!string.IsNullOrEmpty(line) && regex.IsMatch(line))
+                        if (!string.IsNullOrEmpty(line) && loginString.IsMatch(line))
                         {
                             if (line.Contains("[Registration]"))
                             {
@@ -55,24 +72,24 @@ namespace EasyChatServer
                                 string[] lp = line.Split(';');
                                 login = lp[0].Substring(lp[0].IndexOf("Login:") + 6);
                                 password = lp[1].Substring(lp[1].IndexOf("Password:") + 9);
-                                StreamWriter sw = new StreamWriter(client.GetStream());
+                                StreamWriter sw = new StreamWriter(tcpClient.GetStream());
                                 sw.AutoFlush = true;
-                                //Verification
                                 var query = db.Users.Where(p => p.Login == login);
                                 if (query.Count() == 0)
                                 {
                                     User user = new User(login, password, "");
+                                    client = new ConnectedClient(user, tcpClient);
                                     db.Users.Add(user);
                                     db.SaveChanges();
                                     sw.WriteLine("Succes");
-                                    clients.Add(new ConnectedClient(user, client));
+                                    clients.Add(client);
                                     Console.WriteLine(login + " registred");
                                 }
                                 else
                                 {
                                     sw.WriteLine("Refused");
-                                    client.Close();
-                                    clients.Remove(clients.Find(x => x.Client == client));
+                                    clients.Remove(clients.Find(x => x.TcpClient == tcpClient));
+                                    tcpClient.Close();
                                 }
                             }
                             else
@@ -81,7 +98,7 @@ namespace EasyChatServer
                                 string[] lp = line.Split(';');
                                 login = lp[0].Substring(lp[0].IndexOf("Login:") + 6);
                                 password = lp[1].Substring(lp[1].IndexOf("Password:") + 9);
-                                StreamWriter sw = new StreamWriter(client.GetStream());
+                                StreamWriter sw = new StreamWriter(tcpClient.GetStream());
                                 sw.AutoFlush = true;
                                 //Verification
                                 try
@@ -91,56 +108,88 @@ namespace EasyChatServer
                                     if (login == user.Login && password == user.Password)
                                     {
                                         sw.WriteLine("Succes");
-                                        clients.Add(new ConnectedClient(user, client));
+                                        client = new ConnectedClient(user, tcpClient);
+                                        clients.Add(client);
                                         Console.WriteLine(login + " logined");
                                     }
                                     else
                                     {
                                         sw.WriteLine("Refused");
-                                        client.Close();
-                                        clients.Remove(clients.Find(x => x.Client == client));
+                                        clients.Remove(clients.Find(x => x.TcpClient == tcpClient));
+                                        tcpClient.Close();
                                     }
                                 }
                                 catch (InvalidOperationException)
                                 {
                                     sw.WriteLine("Refused");
-                                    client.Close();
-                                    clients.Remove(clients.Find(x => x.Client == client));
+                                    clients.Remove(clients.Find(x => x.TcpClient == tcpClient));
+                                    tcpClient.Close();
                                 }
                             }
-                            break;
+                        }
+                        else if (!string.IsNullOrEmpty(line) && client != null)
+                        {
+                            //SelectChat
+                            if (!string.IsNullOrEmpty(line) && selectChatString.IsMatch(line))
+                            {
+                                line = line.Replace("ConnectChat:", "");
+                                var chat = chatRoomWorkers.Where(p => p.chatRoom.Name == line);
+                                if (chat.Count() > 0)
+                                {
+                                    if (client.currentChatRoomWorker != null)
+                                        client.currentChatRoomWorker.RemoveActiveMember(client);
+                                    chat.First().AddNewActiveMember(client);
+                                    chat.First().chatRoom.MembersArray.Add(client.User);
+                                    db.SaveChanges();
+                                    Console.WriteLine(client.User.Login + " connected to " + line);
+                                }
+                                else
+                                {
+                                    //Create chat
+                                    ChatRoom newChat = new ChatRoom();
+                                    newChat.Name = line;
+                                    db.ChatRooms.Add(newChat);
+                                    newChat.MembersArray.Add(client.User);
+                                    db.SaveChanges();
+                                    ChatRoomWorker chatRoomWorker = new ChatRoomWorker(newChat);
+                                    chatRoomWorkers.Add(chatRoomWorker);
+                                    if (client.currentChatRoomWorker != null)
+                                        client.currentChatRoomWorker.RemoveActiveMember(client);
+                                    chatRoomWorker.AddNewActiveMember(client);
+                                    Console.WriteLine("ChatRoom " + line + " created");
+                                    Console.WriteLine(client.User.Login + " connected to " + line);
+                                }
+                            }
+                            else if (line == "[getServerInfo]MyChatList")
+                            {
+                                string result = "ChatList:";
+                                foreach (ChatRoom c in client.User.ChatRooms)
+                                {
+                                    result += c.Name + ";";
+                                }
+                                StreamWriter sw = new StreamWriter(tcpClient.GetStream());
+                                sw.AutoFlush = true;
+                                sw.WriteLine(result);
+                            }
+                            else
+                            {
+                                if (line == "[getServerInfo]AllChatList")
+                                {
+                                    string result = "ChatList:";
+                                    foreach (ChatRoom c in db.ChatRooms)
+                                    {
+                                        result += c.Name + ";";
+                                    }
+                                    StreamWriter sw = new StreamWriter(tcpClient.GetStream());
+                                    sw.AutoFlush = true;
+                                    sw.WriteLine(result);
+                                }
+                            }
                         }
                     }
                     catch (Exception ex) { Console.WriteLine(ex.Message); }
                 }
-                //ChatWorker connection = new ChatWorker();
-                //connection.StartConnection();
-            }
-        }
-
-        static bool isClientConnected(TcpClient tcpClient)
-        {
-            IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();
-
-            TcpConnectionInformation[] tcpConnections = ipProperties.GetActiveTcpConnections();
-
-            foreach (TcpConnectionInformation c in tcpConnections)
-            {
-                TcpState stateOfConnection = c.State;
-
-                if (c.LocalEndPoint.Equals(tcpClient.Client.LocalEndPoint) && c.RemoteEndPoint.Equals(tcpClient.Client.RemoteEndPoint))
-                {
-                    if (stateOfConnection == TcpState.Established)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }
-            return false;
+            });
         }
     }
 }

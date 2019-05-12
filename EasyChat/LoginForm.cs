@@ -36,8 +36,8 @@ namespace EasyChat
                 if (bunifuMaterialTextbox1.Text != "" && bunifuMaterialTextbox2.Text != "" && regex.IsMatch(bunifuMaterialTextbox1.Text) && regex.IsMatch(bunifuMaterialTextbox2.Text))
                 {
                     MainForm mainForm = new MainForm();
-                    mainForm.chatConnection = new ServerConnection("127.0.0.1", 5050, bunifuMaterialTextbox1.Text, bunifuMaterialTextbox2.Text, mainForm);
-                        if (mainForm.chatConnection.Connect(false))
+                    mainForm.serverConnection = new ServerConnection("127.0.0.1", 5050, bunifuMaterialTextbox1.Text, bunifuMaterialTextbox2.Text, mainForm);
+                        if (mainForm.serverConnection.Connect(false))
                         {
                             this.Hide();
                             mainForm.Activate();
@@ -58,8 +58,8 @@ namespace EasyChat
             if (bunifuMaterialTextbox1.Text != "" && bunifuMaterialTextbox2.Text != "" && regex.IsMatch(bunifuMaterialTextbox1.Text) && regex.IsMatch(bunifuMaterialTextbox2.Text))
             {
                 MainForm mainForm = new MainForm();
-                mainForm.chatConnection = new ServerConnection("127.0.0.1", 5050, bunifuMaterialTextbox1.Text, bunifuMaterialTextbox2.Text, mainForm);
-                if (mainForm.chatConnection.Connect(true))
+                mainForm.serverConnection = new ServerConnection("127.0.0.1", 5050, bunifuMaterialTextbox1.Text, bunifuMaterialTextbox2.Text, mainForm);
+                if (mainForm.serverConnection.Connect(true))
                 {
                     MessageBox.Show("You have been succesfuly registred", "Succes", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.Hide();

@@ -15,7 +15,7 @@ namespace EasyChat
 {
     public partial class MainForm : Form
     {
-        public ServerConnection chatConnection = null;
+        public ServerConnection serverConnection = null;
         public MainForm()
         {
             InitializeComponent();
@@ -40,7 +40,23 @@ namespace EasyChat
         private void bunifuImageButton3_Click(object sender, EventArgs e)
         {
             //Add chat
-            chatList1.AddNewButton("ChatRoom");
+            List<string> list = serverConnection.ReciveChatListFromServer();
+            if(list.Exists(s => s == bunifuMaterialTextbox1.Text))
+            {
+                chatList1.AddNewButton(bunifuMaterialTextbox1.Text);
+            }
+            else
+            {
+                DialogResult res = MessageBox.Show("Chat room with this name does not exist. Do you wanna to create new chat room?", "Create new chat room?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if(res == DialogResult.Yes)
+                {
+                    chatList1.AddNewButton(bunifuMaterialTextbox1.Text);
+                }
+            }
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
         }
     }
 }

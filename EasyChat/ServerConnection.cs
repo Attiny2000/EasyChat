@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -69,44 +70,105 @@ namespace EasyChat
                     catch (Exception) { MessageBox.Show("Server does't respond", "Server error", MessageBoxButtons.OK, MessageBoxIcon.Error); return false; }
                 }).Result;
         }
-
-
+        public async void SendLine(string message)
+        {
+            await Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    if (client != null && client.Connected && !string.IsNullOrWhiteSpace(message))
+                    {
+                        sw.WriteLine(message);
+                        //mainForm.chatBox1.AddNewOutcomingMessage(message, DateTime.Now.ToString());
+                    }
+                }
+                catch (Exception ex) { MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+            });
+        }
         public async void startListen()
         {
             await Task.Factory.StartNew(() =>
             {
                 while (true)
                 {
-                    //try
-                    //{
-                    if (client != null && client.Connected && isClientConnected())
+                    try
                     {
-                        try
+                        if (client != null && client.Connected && isClientConnected())
                         {
-                            string line = sr.ReadLine();
-                            if (line != null)
-                                mainForm.chatBox1.AddNewIncomingMessage(line, DateTime.Now.ToString());
+                                string line = sr.ReadLine();
+                                if (line != null)
+                                    mainForm.chatBox1.AddNewIncomingMessage(line, DateTime.Now.ToString());
                         }
-                        catch (IOException ex) { }
+                        Task.Delay(100).Wait();
                     }
-                    Task.Delay(100).Wait();
-                    //}
-                    //catch (Exception ex) { MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+                    catch (Exception ex) { MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
                 }
             });
+        }
+
+        public List<string> ReciveMyChatListFromServer()
+        {
+            //Regex regex = new Regex(@"^ChatList:([a-zA-Z0-9]{1,24};)+");
+            List<string> list = new List<string>();
+            while (client.Connected)
+            {
+                try
+                {
+                    if (client != null && client.Connected && isClientConnected())
+                    {
+                        mainForm.serverConnection.SendLine("[getServerInfo]MyChatList");
+                        string line = sr.ReadLine();
+                        if (line != null && line.Contains("ChatList:"))
+                        {
+                            line = line.Replace("[getServerInfo]ChatList:", "");
+                            list = line.Split(';').ToList();
+                            return list;
+                        }
+                    }
+                    else
+                        return list;
+                }
+                catch (Exception) { return new List<string>(); }
+            }
+            return list;
+        }
+        public List<string> ReciveChatListFromServer()
+        {
+            //Regex regex = new Regex(@"^ChatList:([a-zA-Z0-9]{1,24};)+");
+            List<string> list = new List<string>();
+            while (client.Connected)
+            {
+                try
+                {
+                    if (client != null && client.Connected && isClientConnected())
+                    {
+                        mainForm.serverConnection.SendLine("[getServerInfo]AllChatList");
+                        string line = sr.ReadLine();
+                        if (line != null && line.Contains("ChatList:"))
+                        {
+                            line = line.Replace("ChatList:", "");
+                            list = line.Split(';').ToList();
+                            return list;
+                        }
+                    }
+                    else
+                        return list;
+                }
+                catch (Exception) { return new List<string>(); }
+            }
+            return list;
         }
         public void Disconnect()
         {
             //Disconnect
-            //try
-            //{
-                //sw.WriteLine("/close connection");
+            try
+            {
                 client.Close();
                 sr.Close();
                 sw.Close();
-                //mainForm.onlineStatusImage.Image = Properties.Resources.offline_icon_S;
-            //}
-            //catch (Exception ex) { MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+                mainForm.onlineStatusImage.Image = Properties.Resources.offline_icon_S;
+            }
+            catch (Exception) {}
         }
 
         public bool isClientConnected()
@@ -134,22 +196,6 @@ namespace EasyChat
 
             }
             return false;
-        }
-
-        public async void SendMessage(string message)
-        {
-            await Task.Factory.StartNew(() =>
-            {
-                //try
-                //{
-                    if (client != null && client.Connected && !string.IsNullOrWhiteSpace(message))
-                    {
-                        sw.WriteLine(message);
-                        mainForm.chatBox1.AddNewOutcomingMessage(message, DateTime.Now.ToString());
-                    }
-                //}
-                //catch (Exception ex) { MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
-            });
         }
     }
 }

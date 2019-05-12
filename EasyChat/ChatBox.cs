@@ -67,7 +67,7 @@ namespace EasyChat
         {
             if (messageTextBox.Text != "" && messageTextBox.Text != "Write your message here")
             {
-                mainForm.chatConnection.SendMessage(messageTextBox.Text);
+                mainForm.serverConnection.SendLine(messageTextBox.Text);
                 messageTextBox.Text = "";
             }
         }
@@ -106,7 +106,7 @@ namespace EasyChat
                 if (e.KeyCode == Keys.Enter)
                 {
                     if(messageTextBox.Text != "")
-                    mainForm.chatConnection.SendMessage(messageTextBox.Text);
+                    mainForm.serverConnection.SendLine(messageTextBox.Text);
                     messageTextBox.Text = "";
                     e.SuppressKeyPress = true;
                     e.Handled = true;

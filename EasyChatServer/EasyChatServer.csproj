@@ -50,7 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChatWorker.cs" />
+    <Compile Include="ChatRoomWorker.cs" />
     <Compile Include="ConnectedClient.cs" />
     <Compile Include="Model\ChatRoom.cs" />
     <Compile Include="Model\DataContext.cs" />

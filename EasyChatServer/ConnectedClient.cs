@@ -10,12 +10,13 @@ namespace EasyChatServer
     class ConnectedClient
     {
         public User User { get; set; }
-        public TcpClient Client { get; set; }
+        public TcpClient TcpClient { get; set; }
+        public ChatRoomWorker currentChatRoomWorker { get; set; }
 
         public ConnectedClient(User user, TcpClient client)
         {
-            User = User;
-            Client = client;
+            this.User = user;
+            this.TcpClient = client;
         }
     }
 }
