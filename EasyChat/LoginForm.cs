@@ -18,7 +18,21 @@ namespace EasyChat
             InitializeComponent();
         }
 
-
+        private void LoginForm_Load(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(Properties.Settings.Default.IP))
+            {
+                Properties.Settings.Default.IP = "127.0.0.1";
+                Properties.Settings.Default.Save();
+            }
+            if (!(string.IsNullOrWhiteSpace(Properties.Settings.Default.Login)) && !(string.IsNullOrWhiteSpace(Properties.Settings.Default.Password)))
+            {
+                bunifuMaterialTextbox1.TabStop = false;
+                bunifuMaterialTextbox2.TabStop = false;
+                bunifuMaterialTextbox1.Text = Properties.Settings.Default.Login;
+                bunifuMaterialTextbox2.Text = Properties.Settings.Default.Password;
+            }
+        }
         private void bunifuImageButton1_Click(object sender, EventArgs e)
         {
             Application.Exit();
@@ -36,15 +50,19 @@ namespace EasyChat
                 if (bunifuMaterialTextbox1.Text != "" && bunifuMaterialTextbox2.Text != "" && regex.IsMatch(bunifuMaterialTextbox1.Text) && regex.IsMatch(bunifuMaterialTextbox2.Text))
                 {
                     MainForm mainForm = new MainForm();
-                    mainForm.serverConnection = new ServerConnection("127.0.0.1", 5050, bunifuMaterialTextbox1.Text, bunifuMaterialTextbox2.Text, mainForm);
-                        if (mainForm.serverConnection.Connect(false))
-                        {
-                            this.Hide();
-                            mainForm.Activate();
-                            mainForm.Show();
-                        }
-                        else { MessageBox.Show("Wrong login or password", "You were refused by server", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+
+                    mainForm.serverConnection = new ServerConnection(Properties.Settings.Default.IP, 5050, bunifuMaterialTextbox1.Text, bunifuMaterialTextbox2.Text, mainForm);
+                    if (mainForm.serverConnection.Connect(false))
+                    {
+                        Properties.Settings.Default.Login = bunifuMaterialTextbox1.Text;
+                        Properties.Settings.Default.Password = bunifuMaterialTextbox2.Text;
+                        Properties.Settings.Default.Save();
+                        this.Hide();
+                        mainForm.Activate();
+                        mainForm.Show();
                     }
+                    else { MessageBox.Show("Wrong login or password", "You were refused by server", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+                }
                 else
                 {
                     MessageBox.Show("Login and password can only include letters of latin alphabet or numbers. Login and password length must be between 3 and 24 charesters.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -58,10 +76,13 @@ namespace EasyChat
             if (bunifuMaterialTextbox1.Text != "" && bunifuMaterialTextbox2.Text != "" && regex.IsMatch(bunifuMaterialTextbox1.Text) && regex.IsMatch(bunifuMaterialTextbox2.Text))
             {
                 MainForm mainForm = new MainForm();
-                mainForm.serverConnection = new ServerConnection("127.0.0.1", 5050, bunifuMaterialTextbox1.Text, bunifuMaterialTextbox2.Text, mainForm);
+                mainForm.serverConnection = new ServerConnection(Properties.Settings.Default.IP, 5050, bunifuMaterialTextbox1.Text, bunifuMaterialTextbox2.Text, mainForm);
                 if (mainForm.serverConnection.Connect(true))
                 {
                     MessageBox.Show("You have been succesfuly registred", "Succes", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Properties.Settings.Default.Login = bunifuMaterialTextbox1.Text;
+                    Properties.Settings.Default.Password = bunifuMaterialTextbox2.Text;
+                    Properties.Settings.Default.Save();
                     this.Hide();
                     mainForm.Activate();
                     mainForm.Show();
@@ -72,6 +93,11 @@ namespace EasyChat
             {
                 MessageBox.Show("Login and password can only include letters of latin alphabet or numbers. Login and password length must be between 3 and 24 charesters.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+        }
+
+        private void bunifuMaterialTextbox2_OnValueChanged(object sender, EventArgs e)
+        {
+            bunifuMaterialTextbox2.isPassword = true;
         }
     }
 }

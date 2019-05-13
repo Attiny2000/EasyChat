@@ -106,6 +106,7 @@ namespace EasyChat
                     activeButton = (BunifuFlatButton)sender;
                     activeButton.selected = true;
                     mainForm.serverConnection.SendLine("ConnectChat:" + activeButton.Text.Replace(" ", ""));
+                    mainForm.chatBox1.Clear();
                     mainForm.serverConnection.startListen();
                     mainForm.onlineStatusImage.Image = Properties.Resources.online_icon_S;
                 }

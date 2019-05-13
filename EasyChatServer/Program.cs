@@ -107,6 +107,7 @@ namespace EasyChatServer
                             else
                             {
                                 //Login
+                                line.Replace("[Login]", "");
                                 string[] lp = line.Split(';');
                                 login = lp[0].Substring(lp[0].IndexOf("Login:") + 6);
                                 password = lp[1].Substring(lp[1].IndexOf("Password:") + 9);
@@ -181,7 +182,7 @@ namespace EasyChatServer
                                 }
                             }
                         }
-                        else if (line == "[ServerInfo]MyChatList")
+                        else if (line == "[getServerInfo]MyChatList")
                         {
                             string result = "ChatList:";
                             foreach (ChatRoom c in client.User.ChatRooms)
@@ -193,7 +194,7 @@ namespace EasyChatServer
                         }
                         else
                         {
-                            if (line == "[ServerInfo]AllChatList")
+                            if (line == "[getServerInfo]AllChatList")
                             {
                                 string result = "ChatList:";
                                 foreach (ChatRoom c in db.ChatRooms)

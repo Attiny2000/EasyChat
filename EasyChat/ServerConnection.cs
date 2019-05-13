@@ -51,7 +51,7 @@ namespace EasyChat
                         }
                         else
                         {
-                            byte[] data = Encoding.Unicode.GetBytes($"Login:{Nick};Password:{Password};");
+                            byte[] data = Encoding.Unicode.GetBytes($"[Login]Login:{Nick};Password:{Password};");
                             client.GetStream().Write(data, 0, data.Length);
                         }
 
@@ -172,7 +172,7 @@ namespace EasyChat
                 {
                     if (client != null && client.Connected && isClientConnected())
                     {
-                        mainForm.serverConnection.SendLine("[ServerInfo]MyChatList");
+                        mainForm.serverConnection.SendLine("[getServerInfo]MyChatList");
                         byte[] data = new byte[8192];
                         StringBuilder builder = new StringBuilder();
                         int bytes = 0;
@@ -208,7 +208,7 @@ namespace EasyChat
                 {
                     if (client != null && client.Connected && isClientConnected())
                     {
-                        mainForm.serverConnection.SendLine("[ServerInfo]AllChatList");
+                        mainForm.serverConnection.SendLine("[getServerInfo]AllChatList");
                         byte[] data = new byte[8192];
                         StringBuilder builder = new StringBuilder();
                         int bytes = 0;

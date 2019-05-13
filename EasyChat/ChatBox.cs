@@ -81,8 +81,13 @@ namespace EasyChat
                     c.Parent = null;
                 }
         }
+        public void Clear()
+        {
+            MessageHistoryPanel.Controls.Clear();
+            lastBubbleBottom = 0;
+        }
 
-        private void bunifuCustomTextbox1_Enter(object sender, EventArgs e)
+            private void bunifuCustomTextbox1_Enter(object sender, EventArgs e)
         {
             if (messageTextBox.Text == "Write your message here")
             {
@@ -116,6 +121,7 @@ namespace EasyChat
         private string stringNormalize(string str)
         {
             Regex regex = new Regex(@"\S{24}");
+            str = str.Replace('▶', '⮞');
             int i = 0;
             while(regex.IsMatch(str, i))
             {

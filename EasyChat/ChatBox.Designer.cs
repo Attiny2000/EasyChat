@@ -109,9 +109,9 @@
         }
 
         #endregion
-        private System.Windows.Forms.Panel MessageHistoryPanel;
         private System.Windows.Forms.Panel InputMessagePanel;
         private Bunifu.Framework.UI.BunifuImageButton bunifuImageButton1;
         private WindowsFormsControlLibrary1.BunifuCustomTextbox messageTextBox;
+        private System.Windows.Forms.Panel MessageHistoryPanel;
     }
 }
