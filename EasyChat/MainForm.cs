@@ -47,7 +47,7 @@ namespace EasyChat
             }
             else
             {
-                DialogResult res = MessageBox.Show("Chat room with this name does not exist. Do you wanna to create new chat room?", "Create new chat room?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                DialogResult res = MessageBox.Show("Chat room with this name does not exist. Do you want to create new chat room?", "Create new chat room?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if(res == DialogResult.Yes)
                 {
                     chatList1.AddNewButton(bunifuMaterialTextbox1.Text);

@@ -35,7 +35,7 @@ namespace EasyChat
             ListPanel.VerticalScroll.Maximum = 0;
             ListPanel.AutoScroll = true;
 
-            List<string> list = mainForm.serverConnection.ReciveChatListFromServer();
+            List<string> list = mainForm.serverConnection.ReciveMyChatListFromServer();
             foreach (string s in list)
             {
                 AddNewButton(s);
@@ -100,12 +100,15 @@ namespace EasyChat
             }
             else
             {
-                activeButton.selected = false;
-                activeButton = (BunifuFlatButton)sender;
-                activeButton.selected = true;
-                mainForm.serverConnection.SendLine("ConnectChat:" + activeButton.Text.Replace(" ", ""));
-                mainForm.serverConnection.startListen();
-                mainForm.onlineStatusImage.Image = Properties.Resources.online_icon_S;
+                if (activeButton != (BunifuFlatButton)sender)
+                {
+                    activeButton.selected = false;
+                    activeButton = (BunifuFlatButton)sender;
+                    activeButton.selected = true;
+                    mainForm.serverConnection.SendLine("ConnectChat:" + activeButton.Text.Replace(" ", ""));
+                    mainForm.serverConnection.startListen();
+                    mainForm.onlineStatusImage.Image = Properties.Resources.online_icon_S;
+                }
             }
         }
     }

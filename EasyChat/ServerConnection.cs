@@ -15,8 +15,8 @@ namespace EasyChat
     public class ServerConnection
     {
         TcpClient client;
-        StreamReader sr;
-        StreamWriter sw;
+        //StreamReader sr;
+        //StreamWriter sw;
         public string IP;
         public int Port;
         public string Nick;
@@ -41,11 +41,19 @@ namespace EasyChat
                     {
                         client = new TcpClient();
                         client.Connect(IP, Port);
-                        sw = new StreamWriter(client.GetStream());
-                        sr = new StreamReader(client.GetStream());
-                        sw.AutoFlush = true;
-                        if (isRegistration) { sw.WriteLine($"[Registration]Login:{Nick};Password:{Password};"); }
-                        else { sw.WriteLine($"Login:{Nick};Password:{Password};"); }
+                        //sw = new StreamWriter(client.GetStream());
+                        //sr = new StreamReader(client.GetStream());
+                        //sw.AutoFlush = true;
+                        if (isRegistration)
+                        {
+                            byte[] data = Encoding.Unicode.GetBytes($"[Registration]Login:{Nick};Password:{Password};");
+                            client.GetStream().Write(data, 0, data.Length);
+                        }
+                        else
+                        {
+                            byte[] data = Encoding.Unicode.GetBytes($"Login:{Nick};Password:{Password};");
+                            client.GetStream().Write(data, 0, data.Length);
+                        }
 
                         //mainForm.onlineStatusImage.Image = Properties.Resources.online_icon_S;
                         while (true)
@@ -54,52 +62,59 @@ namespace EasyChat
                             {
                                 try
                                 {
-                                    string line = sr.ReadLine();
+                                    byte[] data1 = new byte[8192];
+                                    StringBuilder builder = new StringBuilder();
+                                    int bytes = 0;
+                                    do
+                                    {
+                                        bytes = client.GetStream().Read(data1, 0, data1.Length);
+                                        builder.Append(Encoding.Unicode.GetString(data1, 0, bytes));
+                                    }
+                                    while (client.GetStream().DataAvailable);
+
+                                    string line = builder.ToString();
                                     if (line != null && line == "Succes") return true;
                                     if (line != null && line == "Refused") return false;
                                 }
-                                catch (IOException) { return false; }
+                                catch (Exception) { return false; }
                             }
                             else
                             {
                                 return false;
                             }
-                            Task.Delay(100).Wait();
+                            //Task.Delay(100).Wait();
                         }
                     }
                     catch (Exception) { MessageBox.Show("Server does't respond", "Server error", MessageBoxButtons.OK, MessageBoxIcon.Error); return false; }
                 }).Result;
         }
-        public async void SendLine(string line)
+        public void SendMessage(string message)
         {
-            await Task.Factory.StartNew(() =>
+            try
             {
-                try
+                if (client != null && client.Connected && !string.IsNullOrWhiteSpace(message))
                 {
-                    if (client != null && client.Connected && !string.IsNullOrWhiteSpace(line))
-                    {
-                        sw.WriteLine(line);
-                        //mainForm.chatBox1.AddNewOutcomingMessage(message, DateTime.Now.ToString());
-                    }
+                    byte[] data = Encoding.Unicode.GetBytes(message);
+                    client.GetStream().Write(data, 0, data.Length);
+                    //sw.Write(message);
+                    //Debug.WriteLine(message);
+                    //mainForm.chatBox1.AddNewOutcomingMessage(message, DateTime.Now.ToString());
                 }
-                catch (Exception ex) { MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
-            });
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
-        public async void SendMessage(string message)
+        public void SendLine(string line)
         {
-            await Task.Factory.StartNew(() =>
+            try
             {
-                try
+                if (client != null && client.Connected && !string.IsNullOrWhiteSpace(line))
                 {
-                    if (client != null && client.Connected && !string.IsNullOrWhiteSpace(message))
-                    {
-                        sw.Write(message);
-                        Debug.WriteLine("here");
-                        mainForm.chatBox1.AddNewOutcomingMessage(message, DateTime.Now.ToString());
-                    }
+                    byte[] data = Encoding.Unicode.GetBytes(line);
+                    client.GetStream().Write(data, 0, data.Length);
+                    //mainForm.chatBox1.AddNewOutcomingMessage(line, DateTime.Now.ToString());
                 }
-                catch (Exception ex) { MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
-            });
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
         public async void startListen()
         {
@@ -111,9 +126,34 @@ namespace EasyChat
                     {
                         if (client != null && client.Connected && isClientConnected())
                         {
-                                string message = sr.ReadToEnd();
-                                if (message != null)
-                                    mainForm.chatBox1.AddNewIncomingMessage(message, DateTime.Now.ToString());
+                            byte[] data = new byte[8192];
+                            StringBuilder builder = new StringBuilder();
+                            int bytes = 0;
+                            do
+                            {
+                                bytes = client.GetStream().Read(data, 0, data.Length);
+                                builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
+                            }
+                            while (client.GetStream().DataAvailable);
+
+                            string message = builder.ToString();
+
+                            if (message != null)
+                            {
+                                if (message.Contains('▶'))
+                                {
+                                    //TODO
+                                    string[] s = message.Split('▶');
+                                    if (s[0] == Nick)
+                                    {
+                                        mainForm.chatBox1.AddNewOutcomingMessage(s[1], DateTime.Now.ToString());
+                                    }
+                                    else
+                                    {
+                                        mainForm.chatBox1.AddNewIncomingMessage(s[1], DateTime.Now.ToString(), s[0]);
+                                    }
+                                }
+                            }
                         }
                         Task.Delay(100).Wait();
                     }
@@ -132,11 +172,21 @@ namespace EasyChat
                 {
                     if (client != null && client.Connected && isClientConnected())
                     {
-                        mainForm.serverConnection.SendLine("[getServerInfo]MyChatList");
-                        string line = sr.ReadLine();
+                        mainForm.serverConnection.SendLine("[ServerInfo]MyChatList");
+                        byte[] data = new byte[8192];
+                        StringBuilder builder = new StringBuilder();
+                        int bytes = 0;
+                        do
+                        {
+                            bytes = client.GetStream().Read(data, 0, data.Length);
+                            builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
+                        }
+                        while (client.GetStream().DataAvailable);
+
+                        string line = builder.ToString();
                         if (line != null && line.Contains("ChatList:"))
                         {
-                            line = line.Replace("[getServerInfo]ChatList:", "");
+                            line = line.Replace("ChatList:", "");
                             list = line.Split(';').ToList();
                             return list;
                         }
@@ -158,8 +208,18 @@ namespace EasyChat
                 {
                     if (client != null && client.Connected && isClientConnected())
                     {
-                        mainForm.serverConnection.SendLine("[getServerInfo]AllChatList");
-                        string line = sr.ReadLine();
+                        mainForm.serverConnection.SendLine("[ServerInfo]AllChatList");
+                        byte[] data = new byte[8192];
+                        StringBuilder builder = new StringBuilder();
+                        int bytes = 0;
+                        do
+                        {
+                            bytes = client.GetStream().Read(data, 0, data.Length);
+                            builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
+                        }
+                        while (client.GetStream().DataAvailable);
+
+                        string line = builder.ToString();
                         if (line != null && line.Contains("ChatList:"))
                         {
                             line = line.Replace("ChatList:", "");
@@ -180,8 +240,7 @@ namespace EasyChat
             try
             {
                 client.Close();
-                sr.Close();
-                sw.Close();
+                //sr.Close();
                 mainForm.onlineStatusImage.Image = Properties.Resources.offline_icon_S;
             }
             catch (Exception) {}

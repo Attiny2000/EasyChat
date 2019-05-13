@@ -37,6 +37,7 @@ namespace EasyChat
             this.bunifuElipse1 = new Bunifu.Framework.UI.BunifuElipse(this.components);
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.NickLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -58,9 +59,9 @@ namespace EasyChat
             this.TimeLablel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.TimeLablel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
             this.TimeLablel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.TimeLablel.Location = new System.Drawing.Point(62, 51);
+            this.TimeLablel.Location = new System.Drawing.Point(288, 48);
             this.TimeLablel.Name = "TimeLablel";
-            this.TimeLablel.Size = new System.Drawing.Size(444, 20);
+            this.TimeLablel.Size = new System.Drawing.Size(222, 20);
             this.TimeLablel.TabIndex = 1;
             this.TimeLablel.Text = "5/01/2019 00:00 PM";
             this.TimeLablel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -92,11 +93,24 @@ namespace EasyChat
             this.panel1.Size = new System.Drawing.Size(59, 71);
             this.panel1.TabIndex = 3;
             // 
+            // NickLabel
+            // 
+            this.NickLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.NickLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+            this.NickLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.NickLabel.Location = new System.Drawing.Point(62, 48);
+            this.NickLabel.Name = "NickLabel";
+            this.NickLabel.Size = new System.Drawing.Size(222, 20);
+            this.NickLabel.TabIndex = 4;
+            this.NickLabel.Text = "Tester";
+            this.NickLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // IncomingMessageBubble
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(29)))), ((int)(((byte)(101)))), ((int)(((byte)(152)))));
+            this.Controls.Add(this.NickLabel);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.TimeLablel);
             this.Controls.Add(this.MessageLabel);
@@ -116,5 +130,6 @@ namespace EasyChat
         private Bunifu.Framework.UI.BunifuElipse bunifuElipse1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Label NickLabel;
     }
 }

@@ -22,7 +22,7 @@ namespace EasyChat
             Region rg = new Region(gp);
             pictureBox1.Region = rg;
         }
-        public IncomingMessageBubble(string message,string time)
+        public IncomingMessageBubble(string message, string time, string nick)
         {
             InitializeComponent();
 
@@ -34,6 +34,7 @@ namespace EasyChat
 
             MessageLabel.Text = message;
             TimeLablel.Text = time;
+            NickLabel.Text = nick;
 
             SetHeight();
         }

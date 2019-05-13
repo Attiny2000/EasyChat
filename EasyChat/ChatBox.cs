@@ -30,12 +30,12 @@ namespace EasyChat
             MessageHistoryPanel.VerticalScroll.Visible = true;
             MessageHistoryPanel.AutoScroll = true;
         }
-        public void AddNewIncomingMessage(string message, string time)
+        public void AddNewIncomingMessage(string message, string time, string nick)
         {
             this.Invoke((MethodInvoker)delegate {
                 lock ((object)lastBubbleBottom) {
                     ScrollToBottom();
-                    IncomingMessageBubble bubble = new IncomingMessageBubble(stringNormalize(message), time);
+                    IncomingMessageBubble bubble = new IncomingMessageBubble(stringNormalize(message), time, nick);
                     bubble.Location = new Point(3, lastBubbleBottom + 10);
                     bubble.Size = new Size(510, 68);
                     bubble.Anchor = (AnchorStyles.Top | AnchorStyles.Left);
@@ -106,7 +106,7 @@ namespace EasyChat
                 if (e.KeyCode == Keys.Enter)
                 {
                     if(messageTextBox.Text != "")
-                    mainForm.serverConnection.SendLine(messageTextBox.Text);
+                    mainForm.serverConnection.SendMessage(messageTextBox.Text);
                     messageTextBox.Text = "";
                     e.SuppressKeyPress = true;
                     e.Handled = true;
