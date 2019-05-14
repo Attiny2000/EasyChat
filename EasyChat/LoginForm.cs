@@ -45,28 +45,28 @@ namespace EasyChat
 
         private void button1_Click(object sender, EventArgs e)
         {
-                Regex regex = new Regex(@"^[a-zA-Z0-9]{3,24}$");
-                //Login
-                if (bunifuMaterialTextbox1.Text != "" && bunifuMaterialTextbox2.Text != "" && regex.IsMatch(bunifuMaterialTextbox1.Text) && regex.IsMatch(bunifuMaterialTextbox2.Text))
-                {
-                    MainForm mainForm = new MainForm();
+            Regex regex = new Regex(@"^[a-zA-Z0-9]{3,24}$");
+            //Login
+            if (bunifuMaterialTextbox1.Text != "" && bunifuMaterialTextbox2.Text != "" && regex.IsMatch(bunifuMaterialTextbox1.Text) && regex.IsMatch(bunifuMaterialTextbox2.Text))
+            {
+                MainForm mainForm = new MainForm();
 
-                    mainForm.serverConnection = new ServerConnection(Properties.Settings.Default.IP, 5050, bunifuMaterialTextbox1.Text, bunifuMaterialTextbox2.Text, mainForm);
-                    if (mainForm.serverConnection.Connect(false))
-                    {
-                        Properties.Settings.Default.Login = bunifuMaterialTextbox1.Text;
-                        Properties.Settings.Default.Password = bunifuMaterialTextbox2.Text;
-                        Properties.Settings.Default.Save();
-                        this.Hide();
-                        mainForm.Activate();
-                        mainForm.Show();
-                    }
-                    else { MessageBox.Show("Wrong login or password", "You were refused by server", MessageBoxButtons.OK, MessageBoxIcon.Error); }
-                }
-                else
+                mainForm.serverConnection = new ServerConnection(Properties.Settings.Default.IP, 5050, bunifuMaterialTextbox1.Text, bunifuMaterialTextbox2.Text, mainForm);
+                if(mainForm.serverConnection.Connect(false))
                 {
-                    MessageBox.Show("Login and password can only include letters of latin alphabet or numbers. Login and password length must be between 3 and 24 charesters.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Properties.Settings.Default.Login = bunifuMaterialTextbox1.Text;
+                    Properties.Settings.Default.Password = bunifuMaterialTextbox2.Text;
+                    Properties.Settings.Default.Save();
+                    this.Hide();
+                    mainForm.Activate();
+                    mainForm.Show();
                 }
+                else { MessageBox.Show("Wrong login or password", "You were refused by server", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+            }
+            else
+            {
+                MessageBox.Show("Login and password can only include letters of latin alphabet or numbers. Login and password length must be between 3 and 24 charesters.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)

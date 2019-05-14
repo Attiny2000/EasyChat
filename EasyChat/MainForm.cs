@@ -23,7 +23,7 @@ namespace EasyChat
 
         private void bunifuImageButton1_Click(object sender, EventArgs e)
         {
-            //chatConnection.Disconnect();
+            try { serverConnection.Disconnect(); } catch (Exception) { }
             Application.Exit();
         }
 
@@ -41,7 +41,7 @@ namespace EasyChat
         {
             //Add chat
             List<string> list = serverConnection.ReciveChatListFromServer();
-            if(list.Exists(s => s == bunifuMaterialTextbox1.Text))
+            if (list.Exists(s => s == bunifuMaterialTextbox1.Text))
             {
                 chatList1.AddNewButton(bunifuMaterialTextbox1.Text);
             }

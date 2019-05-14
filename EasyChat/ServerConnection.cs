@@ -7,6 +7,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -15,12 +16,12 @@ namespace EasyChat
     public class ServerConnection
     {
         TcpClient client;
-        //StreamReader sr;
-        //StreamWriter sw;
         public string IP;
         public int Port;
         public string Nick;
         public string Password;
+        private bool isListening = false;
+        private Task listeningTask;
         private MainForm mainForm;
 
         public ServerConnection(string serverIp, int serverPort, string nick, string password, MainForm form)
@@ -34,16 +35,13 @@ namespace EasyChat
 
         public bool Connect(bool isRegistration)
         {
-            //Connect
+                //Connect
                 return Task<bool>.Factory.StartNew(() =>
                 {
                     try
                     {
                         client = new TcpClient();
                         client.Connect(IP, Port);
-                        //sw = new StreamWriter(client.GetStream());
-                        //sr = new StreamReader(client.GetStream());
-                        //sw.AutoFlush = true;
                         if (isRegistration)
                         {
                             byte[] data = Encoding.Unicode.GetBytes($"[Registration]Login:{Nick};Password:{Password};");
@@ -55,7 +53,6 @@ namespace EasyChat
                             client.GetStream().Write(data, 0, data.Length);
                         }
 
-                        //mainForm.onlineStatusImage.Image = Properties.Resources.online_icon_S;
                         while (true)
                         {
                             if (client != null && client.Connected && isClientConnected())
@@ -82,7 +79,6 @@ namespace EasyChat
                             {
                                 return false;
                             }
-                            //Task.Delay(100).Wait();
                         }
                     }
                     catch (Exception) { MessageBox.Show("Server does't respond", "Server error", MessageBoxButtons.OK, MessageBoxIcon.Error); return false; }
@@ -96,31 +92,19 @@ namespace EasyChat
                 {
                     byte[] data = Encoding.Unicode.GetBytes(message);
                     client.GetStream().Write(data, 0, data.Length);
-                    //sw.Write(message);
-                    //Debug.WriteLine(message);
-                    //mainForm.chatBox1.AddNewOutcomingMessage(message, DateTime.Now.ToString());
                 }
             }
             catch (Exception ex) { MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
-        public void SendLine(string line)
+        public void startListen()
         {
-            try
+            if (listeningTask != null)
+                listeningTask.Dispose();
+
+            isListening = true;
+            Task.Factory.StartNew(() =>
             {
-                if (client != null && client.Connected && !string.IsNullOrWhiteSpace(line))
-                {
-                    byte[] data = Encoding.Unicode.GetBytes(line);
-                    client.GetStream().Write(data, 0, data.Length);
-                    //mainForm.chatBox1.AddNewOutcomingMessage(line, DateTime.Now.ToString());
-                }
-            }
-            catch (Exception ex) { MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
-        }
-        public async void startListen()
-        {
-            await Task.Factory.StartNew(() =>
-            {
-                while (true)
+                while (isListening)
                 {
                     try
                     {
@@ -142,7 +126,6 @@ namespace EasyChat
                             {
                                 if (message.Contains('▶'))
                                 {
-                                    //TODO
                                     string[] s = message.Split('▶');
                                     if (s[0] == Nick)
                                     {
@@ -155,9 +138,9 @@ namespace EasyChat
                                 }
                             }
                         }
-                        Task.Delay(100).Wait();
+                        Thread.Sleep(100);
                     }
-                    catch (Exception ex) { MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+                    catch (Exception ex) { Debug.WriteLine(ex.Message); }
                 }
             });
         }
@@ -172,7 +155,8 @@ namespace EasyChat
                 {
                     if (client != null && client.Connected && isClientConnected())
                     {
-                        mainForm.serverConnection.SendLine("[getServerInfo]MyChatList");
+                        mainForm.serverConnection.SendMessage("[getServerInfo]MyChatList");
+
                         byte[] data = new byte[8192];
                         StringBuilder builder = new StringBuilder();
                         int bytes = 0;
@@ -192,7 +176,9 @@ namespace EasyChat
                         }
                     }
                     else
+                    {
                         return list;
+                    }
                 }
                 catch (Exception) { return new List<string>(); }
             }
@@ -208,7 +194,15 @@ namespace EasyChat
                 {
                     if (client != null && client.Connected && isClientConnected())
                     {
-                        mainForm.serverConnection.SendLine("[getServerInfo]AllChatList");
+                        if (isListening)
+                        {
+                            mainForm.chatList1.activeButton.selected = false;
+                            mainForm.chatList1.activeButton = null;
+                            Disconnect();
+                            Connect(false);
+                        }
+
+                        mainForm.serverConnection.SendMessage("[getServerInfo]AllChatList");
                         byte[] data = new byte[8192];
                         StringBuilder builder = new StringBuilder();
                         int bytes = 0;
@@ -228,7 +222,9 @@ namespace EasyChat
                         }
                     }
                     else
+                    {
                         return list;
+                    }
                 }
                 catch (Exception) { return new List<string>(); }
             }
@@ -236,11 +232,14 @@ namespace EasyChat
         }
         public void Disconnect()
         {
-            //Disconnect
             try
             {
+                isListening = false;
+                listeningTask.Dispose();
+                mainForm.serverConnection.SendMessage("[Disconnect]");
+                client.GetStream().Dispose();
+                client.Dispose();
                 client.Close();
-                //sr.Close();
                 mainForm.onlineStatusImage.Image = Properties.Resources.offline_icon_S;
             }
             catch (Exception) {}

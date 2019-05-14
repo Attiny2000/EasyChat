@@ -14,14 +14,14 @@ namespace EasyChatServer
 {
     class ChatRoomWorker
     {
-        public ChatRoom chatRoom { get; }
-        List<ConnectedClient> clients { get; }
+        public ChatRoom ChatRoom { get; }
+        List<ConnectedClient> Clients { get; }
         Regex selectChatString = new Regex(@"^ConnectChat:[a-zA-Z0-9]{1,24}$");
 
         public ChatRoomWorker(ChatRoom chatRoom)
         {
-            this.chatRoom = chatRoom;
-            clients = new List<ConnectedClient>();
+            this.ChatRoom = chatRoom;
+            Clients = new List<ConnectedClient>();
         }
         public void AddNewActiveMember(ConnectedClient client, DataContext db, List<ChatRoomWorker> chatRoomWorkers)
         {
@@ -29,12 +29,9 @@ namespace EasyChatServer
             {
                 try
                 {
-                    clients.Add(client);
-                    //StreamReader sr = new StreamReader(client.TcpClient.GetStream());
+                    Clients.Add(client);
                     while (client.TcpClient.Connected && isClientConnected(client.TcpClient))
                     {
-                        //string message = sr.ReadToEnd();
-
                         //Recive messagge
                         byte[] data = new byte[8192];
                         StringBuilder builder = new StringBuilder();
@@ -52,18 +49,8 @@ namespace EasyChatServer
                         if (!string.IsNullOrEmpty(message) && selectChatString.IsMatch(message))
                         {
                             message = message.Replace("ConnectChat:", "");
-                            var chat = chatRoomWorkers.Where(p => p.chatRoom.Name == message);
-                            if (chat.Count() > 0)
-                            {
-                                if (client.currentChatRoomWorker != null)
-                                    client.currentChatRoomWorker.RemoveActiveMember(client);
-                                clients.Remove(client);
-                                chat.First().AddNewActiveMember(client, db, chatRoomWorkers);
-                                chat.First().chatRoom.MembersArray.Add(client.User);
-                                db.SaveChanges();
-                                Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " connected to " + message);
-                            }
-                            else
+                            var chat = chatRoomWorkers.Where(p => p.ChatRoom.Name == message);
+                            if (chat.Count() == 0)
                             {
                                 //Create chat
                                 ChatRoom newChat = new ChatRoom();
@@ -75,9 +62,19 @@ namespace EasyChatServer
                                 chatRoomWorkers.Add(chatRoomWorker);
                                 if (client.currentChatRoomWorker != null)
                                     client.currentChatRoomWorker.RemoveActiveMember(client);
-                                clients.Remove(client);
+                                Clients.Remove(client);
                                 chatRoomWorker.AddNewActiveMember(client, db, chatRoomWorkers);
                                 Console.WriteLine("[" + DateTime.Now.ToString() + "] " + "ChatRoom " + message + " created");
+                                Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " connected to " + message);
+                            }
+                            else
+                            {
+                                if (client.currentChatRoomWorker != null)
+                                    client.currentChatRoomWorker.RemoveActiveMember(client);
+                                Clients.Remove(client);
+                                chat.First().AddNewActiveMember(client, db, chatRoomWorkers);
+                                chat.First().ChatRoom.MembersArray.Add(client.User);
+                                db.SaveChanges();
                                 Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " connected to " + message);
                             }
                         }
@@ -103,8 +100,18 @@ namespace EasyChatServer
                         }
                         else if (!string.IsNullOrWhiteSpace(message))
                         {
-                            SendToAll(message, client.User.Login);
-                            Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " in " + chatRoom.Name + ": " + message);
+                            if (message == "[Disconnect]")
+                            {
+                                Clients.Remove(client);
+                                client.TcpClient.GetStream().Dispose();
+                                client.TcpClient.Dispose();
+                                client.TcpClient.Close();
+                            }
+                            else
+                            {
+                                SendToAll(message, client.User.Login);
+                                Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " in " + ChatRoom.Name + ": " + message);
+                            }
                         }
                     }
                 }
@@ -113,7 +120,7 @@ namespace EasyChatServer
         }
         public void RemoveActiveMember(ConnectedClient client)
         {
-            clients.Remove(client);
+            Clients.Remove(client);
         }
         public void SendToAll(string message, string senderNick)
         {
@@ -121,7 +128,7 @@ namespace EasyChatServer
             {
                 try
                 {
-                    foreach (ConnectedClient c in clients)
+                    foreach (ConnectedClient c in Clients)
                     {
                         if (c.TcpClient.Connected)
                         {
@@ -130,7 +137,7 @@ namespace EasyChatServer
                         }
                         else
                         {
-                            clients.Remove(c);
+                            Clients.Remove(c);
                         }
                     }
                 }

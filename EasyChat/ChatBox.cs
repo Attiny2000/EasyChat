@@ -112,6 +112,7 @@ namespace EasyChat
                 {
                     if(messageTextBox.Text != "")
                     mainForm.serverConnection.SendMessage(messageTextBox.Text);
+                    //mainForm.chatBox1.AddNewOutcomingMessage(messageTextBox.Text, DateTime.Now.ToString());
                     messageTextBox.Text = "";
                     e.SuppressKeyPress = true;
                     e.Handled = true;

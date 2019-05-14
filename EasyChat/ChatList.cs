@@ -14,10 +14,10 @@ namespace EasyChat
 {
     public partial class ChatList : UserControl
     {
-        int buttonCount = 0;
         int lastButtonBottom = 0;
         MainForm mainForm;
-        BunifuFlatButton activeButton = null;
+        List<string> buttonNames = new List<string>();
+        public BunifuFlatButton activeButton = null;
 
         public ChatList()
         {
@@ -42,36 +42,47 @@ namespace EasyChat
             }
         }
        public void AddNewButton(string buttonText)
-        {
+       {
             if (!string.IsNullOrWhiteSpace(buttonText))
             {
-                ScrollToBottom();
-                BunifuFlatButton button = new BunifuFlatButton();
-                button.Font = ExampleButton.Font;
-                button.Size = ExampleButton.Size;
-                button.Location = new Point(0, lastButtonBottom - 1); ;
-                button.IsTab = ExampleButton.IsTab;
-                button.selected = false;
-                button.Text = "  " + buttonText;
-                button.Activecolor = ExampleButton.Activecolor;
-                button.ForeColor = ExampleButton.ForeColor;
-                button.Textcolor = ExampleButton.Textcolor;
-                button.TextAlign = ExampleButton.TextAlign;
-                button.Normalcolor = ExampleButton.Normalcolor;
-                button.BackColor = ExampleButton.BackColor;
-                button.colbackground = ExampleButton.colbackground;
-                button.OnHovercolor = ExampleButton.OnHovercolor;
-                button.Anchor = ExampleButton.Anchor;
-                button.Iconimage = ExampleButton.Iconimage;
-                button.IconZoom = ExampleButton.IconZoom;
-                button.Name = "button" + buttonCount;
-                button.Click += button_Click;
+                if (buttonNames.Find(n => n == "button" + buttonText) == null)
+                {
+                    ScrollToBottom();
+                    BunifuFlatButton button = new BunifuFlatButton();
+                    button.Font = ExampleButton.Font;
+                    button.Size = ExampleButton.Size;
+                    button.Location = new Point(0, lastButtonBottom - 1); ;
+                    button.IsTab = ExampleButton.IsTab;
+                    button.selected = false;
 
-                ListPanel.Controls.Add(button);
-                ScrollToBottom();
-                lastButtonBottom = button.Location.Y + button.Height;
+
+
+
+
+
+                    button.Text = "  " + buttonText;
+                    button.Activecolor = ExampleButton.Activecolor;
+                    button.ForeColor = ExampleButton.ForeColor;
+                    button.Textcolor = ExampleButton.Textcolor;
+                    button.TextAlign = ExampleButton.TextAlign;
+                    button.Normalcolor = ExampleButton.Normalcolor;
+                    button.BackColor = ExampleButton.BackColor;
+                    button.colbackground = ExampleButton.colbackground;
+                    button.OnHovercolor = ExampleButton.OnHovercolor;
+                    button.Anchor = ExampleButton.Anchor;
+                    button.Iconimage = ExampleButton.Iconimage;
+                    button.IconZoom = ExampleButton.IconZoom;
+                    button.Name = "button" + buttonText;
+                    button.Click += button_Click;
+
+                    buttonNames.Add("button" + buttonText);
+                    ListPanel.Controls.Add(button);
+                    ScrollToBottom();
+                    lastButtonBottom = button.Location.Y + button.Height;
+                }
+                else MessageBox.Show("You are member in this chat already", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-        }
+       }
 
         public void ScrollToBottom()
         {
@@ -94,7 +105,8 @@ namespace EasyChat
                 activeButton = (BunifuFlatButton)sender;
                 activeButton.selected = true;
 
-                mainForm.serverConnection.SendLine("ConnectChat:" + activeButton.Text.Replace(" ", ""));
+                mainForm.serverConnection.SendMessage("ConnectChat:" + activeButton.Text.Replace(" ", ""));
+                mainForm.chatBox1.Clear();
                 mainForm.serverConnection.startListen();
                 mainForm.onlineStatusImage.Image = Properties.Resources.online_icon_S;
             }
@@ -105,7 +117,7 @@ namespace EasyChat
                     activeButton.selected = false;
                     activeButton = (BunifuFlatButton)sender;
                     activeButton.selected = true;
-                    mainForm.serverConnection.SendLine("ConnectChat:" + activeButton.Text.Replace(" ", ""));
+                    mainForm.serverConnection.SendMessage("ConnectChat:" + activeButton.Text.Replace(" ", ""));
                     mainForm.chatBox1.Clear();
                     mainForm.serverConnection.startListen();
                     mainForm.onlineStatusImage.Image = Properties.Resources.online_icon_S;

@@ -307,6 +307,6 @@
         private System.Windows.Forms.Panel panel1;
         public ChatBox chatBox1;
         public System.Windows.Forms.PictureBox onlineStatusImage;
-        private ChatList chatList1;
+        public ChatList chatList1;
     }
 }
