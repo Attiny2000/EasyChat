@@ -75,7 +75,7 @@ namespace EasyChat
             this.pictureBox1.ErrorImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.ErrorImage")));
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
-            this.pictureBox1.Location = new System.Drawing.Point(4, 3);
+            this.pictureBox1.Location = new System.Drawing.Point(4, 2);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(54, 54);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -89,7 +89,7 @@ namespace EasyChat
             this.panel1.Location = new System.Drawing.Point(449, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(61, 71);
-            this.panel1.TabIndex = 3;
+            this.panel1.TabIndex = 0;
             // 
             // OutcomingMessageBubble
             // 

@@ -29,12 +29,6 @@ namespace EasyChatServer
             db.Users.Include(u => u.ChatRooms).Load();
             db.ChatRooms.Include(u => u.MembersArray).Load();
             db.Messages.Load();
-            db.Users.Include(u => u.ChatRooms).Load();
-            db.ChatRooms.Include(u => u.MembersArray).Load();
-            db.Messages.Load();
-            db.Users.Include(u => u.ChatRooms).Load();
-            db.ChatRooms.Include(u => u.MembersArray).Load();
-            db.Messages.Load();
             //Chats creation;
             foreach(ChatRoom chat in db.ChatRooms)
             {
@@ -178,23 +172,31 @@ namespace EasyChatServer
                             }
                             else if (line == "[getServerInfo]MyChatList")
                             {
-                                string result = "ChatList:";
-                                foreach (ChatRoom c in client.User.ChatRooms)
+                                using (DataContext dataContext = new DataContext())
                                 {
-                                    result += c.Name + ";";
+                                    dataContext.Users.Include(u => u.ChatRooms).Load();
+                                    string result = "ChatList:";
+                                    foreach (ChatRoom c in client.User.ChatRooms)
+                                    {
+                                        result += c.Name + ";";
+                                    }
+                                    byte[] data2 = Encoding.Unicode.GetBytes(result);
+                                    client.TcpClient.GetStream().Write(data2, 0, data2.Length);
                                 }
-                                byte[] data2 = Encoding.Unicode.GetBytes(result);
-                                client.TcpClient.GetStream().Write(data2, 0, data2.Length);
                             }
                             else if (line == "[getServerInfo]AllChatList")
                             {
-                                string result = "ChatList:";
-                                foreach (ChatRoom c in db.ChatRooms)
+                                using (DataContext dataContext = new DataContext())
                                 {
-                                    result += c.Name + ";";
+                                    dataContext.ChatRooms.Include(u => u.MembersArray).Load();
+                                    string result = "ChatList:";
+                                    foreach (ChatRoom c in db.ChatRooms)
+                                    {
+                                        result += c.Name + ";";
+                                    }
+                                    byte[] data2 = Encoding.Unicode.GetBytes(result);
+                                    client.TcpClient.GetStream().Write(data2, 0, data2.Length);
                                 }
-                                byte[] data2 = Encoding.Unicode.GetBytes(result);
-                                client.TcpClient.GetStream().Write(data2, 0, data2.Length);
                             }
                         }
                     }

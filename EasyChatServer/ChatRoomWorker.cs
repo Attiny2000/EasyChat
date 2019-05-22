@@ -66,6 +66,7 @@ namespace EasyChatServer
                                 chatRoomWorker.AddNewActiveMember(client, db, chatRoomWorkers);
                                 Console.WriteLine("[" + DateTime.Now.ToString() + "] " + "ChatRoom " + message + " created");
                                 Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " connected to " + message);
+                                Thread.CurrentThread.Abort();
                             }
                             else
                             {
@@ -76,6 +77,7 @@ namespace EasyChatServer
                                 chat.First().ChatRoom.MembersArray.Add(client.User);
                                 db.SaveChanges();
                                 Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " connected to " + message);
+                                Thread.CurrentThread.Abort();
                             }
                         }
                         else if (message == "[getServerInfo]MyChatList")
@@ -106,6 +108,7 @@ namespace EasyChatServer
                                 client.TcpClient.GetStream().Dispose();
                                 client.TcpClient.Dispose();
                                 client.TcpClient.Close();
+                                Thread.CurrentThread.Abort();
                             }
                             else
                             {

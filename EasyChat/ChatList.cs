@@ -55,11 +55,6 @@ namespace EasyChat
                     button.IsTab = ExampleButton.IsTab;
                     button.selected = false;
 
-
-
-
-
-
                     button.Text = "  " + buttonText;
                     button.Activecolor = ExampleButton.Activecolor;
                     button.ForeColor = ExampleButton.ForeColor;
