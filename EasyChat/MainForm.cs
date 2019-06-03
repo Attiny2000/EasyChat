@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using Bunifu.Framework.UI;
 
 namespace EasyChat
 {
@@ -23,8 +24,13 @@ namespace EasyChat
 
         private void bunifuImageButton1_Click(object sender, EventArgs e)
         {
-            try { serverConnection.Disconnect(); } catch (Exception) { }
-            Application.Exit();
+            try
+            {
+                serverConnection.SendMessage("[Disconnect]");
+                serverConnection.Disconnect();
+            }
+            catch (Exception) { }
+            finally { Application.Exit(); }
         }
 
         private void bunifuImageButton2_Click(object sender, EventArgs e)
@@ -34,12 +40,14 @@ namespace EasyChat
 
         private void bunifuImageButton4_Click(object sender, EventArgs e)
         {
-            //Chat settings
+            //Chat menu
+            contextMenuStrip1.Show(PointToScreen(new Point(bunifuImageButton4.Location.X + 0, bunifuImageButton4.Location.Y + 33)), ToolStripDropDownDirection.BelowLeft);
         }
 
         private void bunifuImageButton3_Click(object sender, EventArgs e)
         {
             //Add chat
+            chatBox1.Clear();
             List<string> list = serverConnection.ReciveChatListFromServer();
             if (list.Exists(s => s == bunifuMaterialTextbox1.Text))
             {
@@ -57,6 +65,23 @@ namespace EasyChat
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+        }
+
+        private void leaveChatToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //Delete chat
+            serverConnection.LeaveChat();
+        }
+
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //Users List
+            ActiveUsersForm usersForm = new ActiveUsersForm();
+            usersForm.mainForm = this;
+            usersForm.TopMost = true;
+            usersForm.StartPosition = FormStartPosition.Manual;
+            usersForm.Location = new Point(620, 260);
+            usersForm.Show();
         }
     }
 }

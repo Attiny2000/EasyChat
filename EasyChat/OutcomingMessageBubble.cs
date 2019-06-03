@@ -51,5 +51,10 @@ namespace EasyChat
         {
             SetHeight();
         }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(MessageLabel.Text);
+        }
     }
 }

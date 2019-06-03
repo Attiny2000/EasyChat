@@ -16,8 +16,8 @@ namespace EasyChat
     {
         int lastButtonBottom = 0;
         MainForm mainForm;
-        List<string> buttonNames = new List<string>();
-        public BunifuFlatButton activeButton = null;
+        public List<string> buttonNames = new List<string>();
+        public BunifuFlatButton ActiveButton = null;
 
         public ChatList()
         {
@@ -92,27 +92,37 @@ namespace EasyChat
             }
         }
 
+        public void Clear()
+        {
+            BunifuFlatButton temp = ExampleButton;
+            buttonNames.Clear();
+            ListPanel.Controls.Clear();
+            ListPanel.Controls.Add(temp);
+            ActiveButton = null;
+            lastButtonBottom = 0;
+        }
+
         private void button_Click(object sender, EventArgs e)
         {
-            if(activeButton == null)
+            if(ActiveButton == null)
             {
                 //Chat selected
-                activeButton = (BunifuFlatButton)sender;
-                activeButton.selected = true;
+                ActiveButton = (BunifuFlatButton)sender;
+                ActiveButton.selected = true;
 
-                mainForm.serverConnection.SendMessage("ConnectChat:" + activeButton.Text.Replace(" ", ""));
+                mainForm.serverConnection.SendMessage("ConnectChat:" + ActiveButton.Text.Remove(0, 2));
                 mainForm.chatBox1.Clear();
                 mainForm.serverConnection.startListen();
                 mainForm.onlineStatusImage.Image = Properties.Resources.online_icon_S;
             }
             else
             {
-                if (activeButton != (BunifuFlatButton)sender)
+                if (ActiveButton != (BunifuFlatButton)sender)
                 {
-                    activeButton.selected = false;
-                    activeButton = (BunifuFlatButton)sender;
-                    activeButton.selected = true;
-                    mainForm.serverConnection.SendMessage("ConnectChat:" + activeButton.Text.Replace(" ", ""));
+                    ActiveButton.selected = false;
+                    ActiveButton = (BunifuFlatButton)sender;
+                    ActiveButton.selected = true;
+                    mainForm.serverConnection.SendMessage("ConnectChat:" + ActiveButton.Text.Remove(0, 2));
                     mainForm.chatBox1.Clear();
                     mainForm.serverConnection.startListen();
                     mainForm.onlineStatusImage.Image = Properties.Resources.online_icon_S;

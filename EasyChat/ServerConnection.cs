@@ -155,7 +155,7 @@ namespace EasyChat
                 {
                     if (client != null && client.Connected && isClientConnected())
                     {
-                        mainForm.serverConnection.SendMessage("[getServerInfo]MyChatList");
+                        mainForm.serverConnection.SendMessage("[GetMyChatList]");
 
                         byte[] data = new byte[8192];
                         StringBuilder builder = new StringBuilder();
@@ -184,6 +184,72 @@ namespace EasyChat
             }
             return list;
         }
+        public void LeaveChat()
+        {
+            if (client.Connected)
+            {
+                try
+                {
+                    if (mainForm.chatList1.ActiveButton != null)
+                    {
+                        mainForm.serverConnection.SendMessage("[LeaveChat]");
+                        mainForm.chatBox1.Clear();
+                        mainForm.chatList1.Clear();
+                        if (isListening)
+                        {
+                            Disconnect();
+                            Connect(false);
+                        }
+                        foreach (string s in mainForm.serverConnection.ReciveMyChatListFromServer())
+                        {
+                            mainForm.chatList1.AddNewButton(s);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("You must first select a chat", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex) { MessageBox.Show(ex.Message , "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+            }
+        }
+
+        public List<string> GetUsersList()
+        {
+            List<string> list = new List<string>();
+            while (client.Connected)
+            {
+                try
+                {
+                    if (isListening)
+                    {
+                        Disconnect();
+                        Connect(false);
+                    }
+                    mainForm.serverConnection.SendMessage("[GetUserList]" + mainForm.chatList1.ActiveButton.Text.Remove(0, 2));
+                    byte[] data = new byte[8192];
+                    StringBuilder builder = new StringBuilder();
+                    int bytes = 0;
+                    do
+                    {
+                        bytes = client.GetStream().Read(data, 0, data.Length);
+                        builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
+                    }
+                    while (client.GetStream().DataAvailable);
+
+                    string line = builder.ToString();
+                    if (line != null && line.Contains("UserList:"))
+                    {
+                        line = line.Replace("UserList:", "");
+                        list = line.Split(';').ToList();
+                        return list;
+                    }
+                    return list;
+                }
+                catch (Exception ex) { MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return list; }
+            }
+            return list;
+        }
         public List<string> ReciveChatListFromServer()
         {
             //Regex regex = new Regex(@"^ChatList:([a-zA-Z0-9]{1,24};)+");
@@ -196,13 +262,13 @@ namespace EasyChat
                     {
                         if (isListening)
                         {
-                            mainForm.chatList1.activeButton.selected = false;
-                            mainForm.chatList1.activeButton = null;
+                            mainForm.chatList1.ActiveButton.selected = false;
+                            mainForm.chatList1.ActiveButton = null;
                             Disconnect();
                             Connect(false);
                         }
 
-                        mainForm.serverConnection.SendMessage("[getServerInfo]AllChatList");
+                        mainForm.serverConnection.SendMessage("[GetAllChatList]");
                         byte[] data = new byte[8192];
                         StringBuilder builder = new StringBuilder();
                         int bytes = 0;
@@ -237,7 +303,8 @@ namespace EasyChat
                 isListening = false;
                 listeningTask.Dispose();
                 mainForm.serverConnection.SendMessage("[Disconnect]");
-                client.GetStream().Dispose();
+                if (client.Connected)
+                    client.GetStream().Dispose();
                 client.Dispose();
                 client.Close();
                 mainForm.onlineStatusImage.Image = Properties.Resources.offline_icon_S;

@@ -71,6 +71,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActiveUsersForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ActiveUsersForm.Designer.cs">
+      <DependentUpon>ActiveUsersForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="ChatList.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -110,6 +116,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ActiveUsersForm.resx">
+      <DependentUpon>ActiveUsersForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ChatList.resx">
       <DependentUpon>ChatList.cs</DependentUpon>
     </EmbeddedResource>

@@ -43,6 +43,9 @@
             this.SearchPanel = new System.Windows.Forms.Panel();
             this.bunifuImageButton3 = new Bunifu.Framework.UI.BunifuImageButton();
             this.bunifuMaterialTextbox1 = new Bunifu.Framework.UI.BunifuMaterialTextbox();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.leaveChatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ChatsPanel = new System.Windows.Forms.Panel();
             this.chatList1 = new EasyChat.ChatList();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -56,6 +59,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.bunifuImageButton4)).BeginInit();
             this.SearchPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bunifuImageButton3)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             this.ChatsPanel.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -220,6 +224,32 @@
             this.bunifuMaterialTextbox1.TabStop = false;
             this.bunifuMaterialTextbox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.leaveChatToolStripMenuItem,
+            this.settingsToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.ShowImageMargin = false;
+            this.contextMenuStrip1.Size = new System.Drawing.Size(156, 70);
+            // 
+            // leaveChatToolStripMenuItem
+            // 
+            this.leaveChatToolStripMenuItem.Name = "leaveChatToolStripMenuItem";
+            this.leaveChatToolStripMenuItem.ShowShortcutKeys = false;
+            this.leaveChatToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.leaveChatToolStripMenuItem.Text = "Leave chat";
+            this.leaveChatToolStripMenuItem.Click += new System.EventHandler(this.leaveChatToolStripMenuItem_Click);
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.ShowShortcutKeys = false;
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.settingsToolStripMenuItem.Text = "Users list";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
+            // 
             // ChatsPanel
             // 
             this.ChatsPanel.BackColor = System.Drawing.Color.Gainsboro;
@@ -283,6 +313,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.bunifuImageButton4)).EndInit();
             this.SearchPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bunifuImageButton3)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ChatsPanel.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -308,5 +339,8 @@
         public ChatBox chatBox1;
         public System.Windows.Forms.PictureBox onlineStatusImage;
         public ChatList chatList1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem leaveChatToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
     }
 }
