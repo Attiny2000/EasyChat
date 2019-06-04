@@ -148,14 +148,16 @@ namespace EasyChatServer
                                     {
                                         //Connect chat
                                         line = line.Replace("ConnectChat:", "");
-                                        var chat = chatRoomWorkers.Where(p => p.ChatRoom.Name == line);
+                                        var chat = db.ChatRooms.Where(r => r.Name == line);
                                         if (chat.Count() > 0)
                                         {
                                             if (client.currentChatRoomWorker != null)
                                                 client.currentChatRoomWorker.RemoveActiveMember(client);
-                                            chat.First().ChatRoom.MembersArray.Add(client.User);
+
+                                            chat.First().MembersArray.Add(client.User);
                                             db.SaveChanges();
-                                            chat.First().AddNewActiveMember(client, chatRoomWorkers);
+                                            var chatWorker = chatRoomWorkers.Where(p => p.ChatRoom.Name == line);
+                                            chatWorker.First().AddNewActiveMember(client, chatRoomWorkers);
                                             Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " connected to " + line);
                                             break;
                                         }

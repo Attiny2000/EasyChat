@@ -37,5 +37,15 @@ namespace EasyChat
             else
                 MessageBox.Show("You must first select a chat", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+
+        private void bunifuImageButton3_Click(object sender, EventArgs e)
+        {
+            if (mainForm.chatList1.ActiveButton != null)
+            {
+                listBox1.DataSource = mainForm.serverConnection.GetUsersList();
+            }
+            else
+                MessageBox.Show("You must first select a chat", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
     }
 }

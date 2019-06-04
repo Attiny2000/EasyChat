@@ -28,15 +28,33 @@ namespace EasyChatServer
         {
             new Thread(() =>
             {
-                try
-                {
-                    using (DataContext db = new DataContext())
+            try
+            {
+                using (DataContext db = new DataContext())
                     {
                         db.Users.Include(u => u.ChatRooms).Load();
                         db.ChatRooms.Include(u => u.MembersArray).Load();
                         db.Messages.Load();
-                        Clients.Add(client);
-                        while (client.TcpClient.Connected && isClientConnected(client.TcpClient))
+                        if (!Clients.Exists((ConnectedClient c) => { return c.User.Login == client.User.Login; }))
+                        {
+                            Clients.Add(client);
+                        }
+                        else
+                        {
+                            Clients.Find((ConnectedClient c) => { return c.User.Login == client.User.Login; }).TcpClient = client.TcpClient;
+                            Clients.Find((ConnectedClient c) => { return c.User.Login == client.User.Login; }).currentChatRoomWorker = client.currentChatRoomWorker;
+                        }
+                        //Send message history
+                        foreach (Message m in db.Messages)
+                        {
+                            if (m.ChatRoom.ChatRoomId == ChatRoom.ChatRoomId)
+                            {
+                                byte[] buffer = Encoding.Unicode.GetBytes(m.Sender.Login + '▶' + m.MessageTime + '▶' + m.MessageText);
+                                client.TcpClient.GetStream().Write(buffer, 0, buffer.Length);
+                                Thread.Sleep(100);
+                            }
+                        }
+                        while (client.TcpClient.Connected)
                         {
                             //Recive messagge
                             byte[] data = new byte[8192];
@@ -55,7 +73,7 @@ namespace EasyChatServer
                             if (!string.IsNullOrEmpty(message) && selectChatString.IsMatch(message))
                             {
                                 message = message.Replace("ConnectChat:", "");
-                                var chat = chatRoomWorkers.Where(p => p.ChatRoom.Name == message);
+                                var chat = db.ChatRooms.Where(ch => ch.Name == message);
                                 if (chat.Count() == 0)
                                 {
                                     //Create chat
@@ -78,10 +96,14 @@ namespace EasyChatServer
                                 {
                                     if (client.currentChatRoomWorker != null)
                                         client.currentChatRoomWorker.RemoveActiveMember(client);
-                                    Clients.Remove(client);
-                                    chat.First().ChatRoom.MembersArray.Add(client.User);
-                                    chat.First().AddNewActiveMember(client, chatRoomWorkers);
-                                    db.SaveChanges();
+
+                                    if (!chat.First().MembersArray.Contains(db.Users.Where(u => u.UserId == client.User.UserId).First()))
+                                    {
+                                        chat.First().MembersArray.Add(client.User);
+                                        db.SaveChanges();
+                                    }
+                                    var chatWorker = chatRoomWorkers.Where(p => p.ChatRoom.Name == message);
+                                    chatWorker.First().AddNewActiveMember(client, chatRoomWorkers);
                                     Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " connected to " + message);
                                     Thread.CurrentThread.Abort();
                                 }
@@ -107,6 +129,24 @@ namespace EasyChatServer
                                 }
                                 byte[] data1 = Encoding.Unicode.GetBytes(result);
                                 client.TcpClient.GetStream().Write(data, 0, data.Length);
+                            }
+                            else if (message.Contains("[GetUserList]"))
+                            {
+                                db.ChatRooms.Include(u => u.MembersArray).Load();
+                                string result = "UserList:";
+
+                                chatRoomWorkers.Find((ChatRoomWorker w) => { return w.ChatRoom.Name == message.Replace("[GetUserList]", ""); }).AddNewActiveMember(client, chatRoomWorkers);
+                                foreach (ConnectedClient user in Clients)
+                                {
+                                    result += user.User.Login + "(online)" + ";";
+                                }
+                                foreach (ConnectedClient user in Clients)
+                                {
+                                    if (!Clients.Exists((ConnectedClient p) => { return p.User.UserId == user.User.UserId; }))
+                                        result += user.User.Login + "(offline)" + ";";
+                                }
+                                byte[] data0 = Encoding.Unicode.GetBytes(result);
+                                client.TcpClient.GetStream().Write(data0, 0, data0.Length);
                             }
                             else if (message == "[LeaveChat]")
                             {
@@ -153,7 +193,7 @@ namespace EasyChatServer
                     }
                     catch { }
                 }
-                catch(ThreadAbortException){ Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " disconnected from " + ChatRoom.Name); }
+                catch (ThreadAbortException) { Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " disconnected from " + ChatRoom.Name); }
                 catch (Exception ex) { Console.WriteLine("[" + DateTime.Now.ToString() + "] " + ex.Message); }
             }).Start();
         }
@@ -161,7 +201,7 @@ namespace EasyChatServer
         {
             Clients.Remove(client);
         }
-        public void SendToAll(string message, string senderNick)
+        public void SendToAll(string messageText, string senderNick)
         {
             new Thread(() =>
             {
@@ -171,7 +211,7 @@ namespace EasyChatServer
                     {
                         if (c.TcpClient.Connected)
                         {
-                            byte[] buffer = Encoding.Unicode.GetBytes(senderNick + '▶' + message);
+                            byte[] buffer = Encoding.Unicode.GetBytes(senderNick + '▶' + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + '▶' + messageText);
                             c.TcpClient.GetStream().Write(buffer, 0, buffer.Length);
                         }
                         else
@@ -179,34 +219,19 @@ namespace EasyChatServer
                             Clients.Remove(c);
                         }
                     }
+                    using (DataContext db = new DataContext())
+                    {
+                        Message message = new Message();
+                        message.MessageText = messageText;
+                        message.Sender = db.Users.Where(p => p.Login == senderNick).First();
+                        message.ChatRoom = db.ChatRooms.Where(ch => ch.ChatRoomId == ChatRoom.ChatRoomId).First(); ;
+                        message.MessageTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+                        db.Messages.Add(message);
+                        db.SaveChanges();
+                    }
                 }
                 catch (Exception ex) { Console.WriteLine(ex.Message); }
-            }).Start();
-        }
-
-        private bool isClientConnected(TcpClient tcpClient)
-        {
-            IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();
-
-            TcpConnectionInformation[] tcpConnections = ipProperties.GetActiveTcpConnections();
-
-            foreach (TcpConnectionInformation c in tcpConnections)
-            {
-                TcpState stateOfConnection = c.State;
-
-                if (c.LocalEndPoint.Equals(tcpClient.Client.LocalEndPoint) && c.RemoteEndPoint.Equals(tcpClient.Client.RemoteEndPoint))
-                {
-                    if (stateOfConnection == TcpState.Established)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }
-            return false;
+        }).Start();
         }
     }
 }

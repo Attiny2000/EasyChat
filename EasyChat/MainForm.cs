@@ -78,7 +78,6 @@ namespace EasyChat
             //Users List
             ActiveUsersForm usersForm = new ActiveUsersForm();
             usersForm.mainForm = this;
-            usersForm.TopMost = true;
             usersForm.StartPosition = FormStartPosition.Manual;
             usersForm.Location = new Point(620, 260);
             usersForm.Show();

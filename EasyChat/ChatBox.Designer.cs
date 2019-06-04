@@ -54,7 +54,7 @@
             this.messageTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
             this.messageTextBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(149)))), ((int)(((byte)(148)))), ((int)(((byte)(150)))));
             this.messageTextBox.Location = new System.Drawing.Point(3, 3);
-            this.messageTextBox.MaxLength = 8168;
+            this.messageTextBox.MaxLength = 8128;
             this.messageTextBox.Multiline = true;
             this.messageTextBox.Name = "messageTextBox";
             this.messageTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;

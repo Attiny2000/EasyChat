@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="ChatRoomWorker.cs" />
     <Compile Include="ConnectedClient.cs" />
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\ChatRoom.cs" />
     <Compile Include="Model\DataContext.cs" />
     <Compile Include="Model\Message.cs" />

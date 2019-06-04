@@ -14,7 +14,6 @@ namespace EasyChatServer
         [Required]
         public ChatRoom ChatRoom { get; set; }
         [Required]
-        public DateTime MessageTime { get; set; }
-
+        public string MessageTime { get; set; }
     }
 }

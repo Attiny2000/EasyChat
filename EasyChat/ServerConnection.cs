@@ -55,7 +55,7 @@ namespace EasyChat
 
                         while (true)
                         {
-                            if (client != null && client.Connected && isClientConnected())
+                            if (client != null && client.Connected)
                             {
                                 try
                                 {
@@ -108,7 +108,7 @@ namespace EasyChat
                 {
                     try
                     {
-                        if (client != null && client.Connected && isClientConnected())
+                        if (client != null && client.Connected)
                         {
                             byte[] data = new byte[8192];
                             StringBuilder builder = new StringBuilder();
@@ -129,16 +129,16 @@ namespace EasyChat
                                     string[] s = message.Split('▶');
                                     if (s[0] == Nick)
                                     {
-                                        mainForm.chatBox1.AddNewOutcomingMessage(s[1], DateTime.Now.ToString());
+                                        mainForm.chatBox1.AddNewOutcomingMessage(s[2], s[1]);
                                     }
                                     else
                                     {
-                                        mainForm.chatBox1.AddNewIncomingMessage(s[1], DateTime.Now.ToString(), s[0]);
+                                        mainForm.chatBox1.AddNewIncomingMessage(s[2], s[1], s[0]);
                                     }
                                 }
                             }
                         }
-                        Thread.Sleep(100);
+                        Thread.Sleep(50);
                     }
                     catch (Exception ex) { Debug.WriteLine(ex.Message); }
                 }
@@ -153,7 +153,7 @@ namespace EasyChat
             {
                 try
                 {
-                    if (client != null && client.Connected && isClientConnected())
+                    if (client != null && client.Connected)
                     {
                         mainForm.serverConnection.SendMessage("[GetMyChatList]");
 
@@ -258,7 +258,7 @@ namespace EasyChat
             {
                 try
                 {
-                    if (client != null && client.Connected && isClientConnected())
+                    if (client != null && client.Connected)
                     {
                         if (isListening)
                         {
@@ -310,33 +310,6 @@ namespace EasyChat
                 mainForm.onlineStatusImage.Image = Properties.Resources.offline_icon_S;
             }
             catch (Exception) {}
-        }
-
-        public bool isClientConnected()
-        {
-            IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();
-
-            TcpConnectionInformation[] tcpConnections = ipProperties.GetActiveTcpConnections();
-
-            foreach (TcpConnectionInformation c in tcpConnections)
-            {
-                TcpState stateOfConnection = c.State;
-
-                if (c.LocalEndPoint.Equals(client.Client.LocalEndPoint) && c.RemoteEndPoint.Equals(client.Client.RemoteEndPoint))
-                {
-                    if (stateOfConnection == TcpState.Established)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-                }
-
-            }
-            return false;
         }
     }
 }
