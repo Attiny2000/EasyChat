@@ -52,6 +52,10 @@
   <ItemGroup>
     <Compile Include="ChatRoomWorker.cs" />
     <Compile Include="ConnectedClient.cs" />
+    <Compile Include="Migrations\201906041441547_Second.cs" />
+    <Compile Include="Migrations\201906041441547_Second.Designer.cs">
+      <DependentUpon>201906041441547_Second.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\ChatRoom.cs" />
     <Compile Include="Model\DataContext.cs" />
@@ -72,6 +76,11 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201906041441547_Second.resx">
+      <DependentUpon>201906041441547_Second.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -50,6 +50,7 @@
             this.chatList1 = new EasyChat.ChatList();
             this.panel1 = new System.Windows.Forms.Panel();
             this.chatBox1 = new EasyChat.ChatBox();
+            this.clearHistoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TopPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bunifuImageButton2)).BeginInit();
@@ -229,10 +230,11 @@
             this.contextMenuStrip1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.leaveChatToolStripMenuItem,
-            this.settingsToolStripMenuItem});
+            this.settingsToolStripMenuItem,
+            this.clearHistoryToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.ShowImageMargin = false;
-            this.contextMenuStrip1.Size = new System.Drawing.Size(156, 70);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(156, 92);
             // 
             // leaveChatToolStripMenuItem
             // 
@@ -285,6 +287,13 @@
             this.chatBox1.Name = "chatBox1";
             this.chatBox1.Size = new System.Drawing.Size(559, 410);
             this.chatBox1.TabIndex = 0;
+            // 
+            // clearHistoryToolStripMenuItem
+            // 
+            this.clearHistoryToolStripMenuItem.Name = "clearHistoryToolStripMenuItem";
+            this.clearHistoryToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.clearHistoryToolStripMenuItem.Text = "Clear history";
+            this.clearHistoryToolStripMenuItem.Click += new System.EventHandler(this.clearHistoryToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -342,5 +351,6 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem leaveChatToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem clearHistoryToolStripMenuItem;
     }
 }

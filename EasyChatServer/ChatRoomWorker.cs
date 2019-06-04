@@ -24,14 +24,12 @@ namespace EasyChatServer
             this.ChatRoom = chatRoom;
             Clients = new List<ConnectedClient>();
         }
-        public void AddNewActiveMember(ConnectedClient client, List<ChatRoomWorker> chatRoomWorkers)
+        public void AddNewActiveMember(ConnectedClient client, DataContext db, List<ChatRoomWorker> chatRoomWorkers)
         {
             new Thread(() =>
             {
-            try
-            {
-                using (DataContext db = new DataContext())
-                    {
+                try
+                {
                         db.Users.Include(u => u.ChatRooms).Load();
                         db.ChatRooms.Include(u => u.MembersArray).Load();
                         db.Messages.Load();
@@ -44,139 +42,148 @@ namespace EasyChatServer
                             Clients.Find((ConnectedClient c) => { return c.User.Login == client.User.Login; }).TcpClient = client.TcpClient;
                             Clients.Find((ConnectedClient c) => { return c.User.Login == client.User.Login; }).currentChatRoomWorker = client.currentChatRoomWorker;
                         }
-                        //Send message history
-                        foreach (Message m in db.Messages)
+                    //Send message history
+                    //foreach (Message m in db.Messages)
+                    //{
+                    //    if (m.ChatRoom.ChatRoomId == ChatRoom.ChatRoomId)
+                    //    {
+                    //        byte[] buffer = Encoding.Unicode.GetBytes(m.Sender.Login + '▶' + m.MessageTime + '▶' + m.MessageText);
+                    //        client.TcpClient.GetStream().Write(buffer, 0, buffer.Length);
+                    //        Thread.Sleep(100);
+                    //    }
+                    //}
+                    while (client.TcpClient.Connected)
+                    {
+                        //Recive messagge
+                        byte[] data = new byte[8192];
+                        StringBuilder builder = new StringBuilder();
+                        int bytes = 0;
+                        do
                         {
-                            if (m.ChatRoom.ChatRoomId == ChatRoom.ChatRoomId)
-                            {
-                                byte[] buffer = Encoding.Unicode.GetBytes(m.Sender.Login + '▶' + m.MessageTime + '▶' + m.MessageText);
-                                client.TcpClient.GetStream().Write(buffer, 0, buffer.Length);
-                                Thread.Sleep(100);
-                            }
+                            bytes = client.TcpClient.GetStream().Read(data, 0, data.Length);
+                            builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
                         }
-                        while (client.TcpClient.Connected)
+                        while (client.TcpClient.GetStream().DataAvailable);
+
+                        string message = builder.ToString();
+
+                        //Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " in " + chatRoom.Name + ": " + message);
+                        if (!string.IsNullOrEmpty(message) && selectChatString.IsMatch(message))
                         {
-                            //Recive messagge
-                            byte[] data = new byte[8192];
-                            StringBuilder builder = new StringBuilder();
-                            int bytes = 0;
-                            do
+                            message = message.Replace("ConnectChat:", "");
+                            var chat = db.ChatRooms.Where(ch => ch.Name == message);
+                            if (chat.Count() > 0)
                             {
-                                bytes = client.TcpClient.GetStream().Read(data, 0, data.Length);
-                                builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
-                            }
-                            while (client.TcpClient.GetStream().DataAvailable);
+                                //Connect to chat
+                                if (client.currentChatRoomWorker != null)
+                                    client.currentChatRoomWorker.RemoveActiveMember(client);
 
-                            string message = builder.ToString();
-
-                            //Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " in " + chatRoom.Name + ": " + message);
-                            if (!string.IsNullOrEmpty(message) && selectChatString.IsMatch(message))
-                            {
-                                message = message.Replace("ConnectChat:", "");
-                                var chat = db.ChatRooms.Where(ch => ch.Name == message);
-                                if (chat.Count() == 0)
+                                if (!chat.First().MembersArray.Contains(db.Users.Where(u => u.UserId == client.User.UserId).First()))
                                 {
-                                    //Create chat
-                                    ChatRoom newChat = new ChatRoom();
-                                    newChat.Name = message;
-                                    db.ChatRooms.Add(newChat);
-                                    newChat.MembersArray.Add(client.User);
-                                    db.SaveChanges();
-                                    ChatRoomWorker chatRoomWorker = new ChatRoomWorker(newChat);
-                                    chatRoomWorkers.Add(chatRoomWorker);
-                                    if (client.currentChatRoomWorker != null)
-                                        client.currentChatRoomWorker.RemoveActiveMember(client);
-                                    Clients.Remove(client);
-                                    chatRoomWorker.AddNewActiveMember(client, chatRoomWorkers);
-                                    Console.WriteLine("[" + DateTime.Now.ToString() + "] " + "ChatRoom " + message + " created");
-                                    Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " connected to " + message);
-                                    Thread.CurrentThread.Abort();
-                                }
-                                else
-                                {
-                                    if (client.currentChatRoomWorker != null)
-                                        client.currentChatRoomWorker.RemoveActiveMember(client);
-
-                                    if (!chat.First().MembersArray.Contains(db.Users.Where(u => u.UserId == client.User.UserId).First()))
+                                    try
                                     {
                                         chat.First().MembersArray.Add(client.User);
                                         db.SaveChanges();
                                     }
-                                    var chatWorker = chatRoomWorkers.Where(p => p.ChatRoom.Name == message);
-                                    chatWorker.First().AddNewActiveMember(client, chatRoomWorkers);
-                                    Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " connected to " + message);
-                                    Thread.CurrentThread.Abort();
+                                    catch (Exception) { }
                                 }
+                                chatRoomWorkers.Find(p => p.ChatRoom.Name == message).AddNewActiveMember(client, db, chatRoomWorkers);
+                                Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " connected to " + message);
+                                Thread.CurrentThread.Abort();
                             }
-                            else if (message == "[GetMyChatList]")
+                            else
                             {
-                                db.Users.Include(u => u.ChatRooms).Load();
-                                string result = "ChatList:";
-                                foreach (ChatRoom c in client.User.ChatRooms)
-                                {
-                                    result += c.Name + ";";
-                                }
-                                byte[] data1 = Encoding.Unicode.GetBytes(result);
-                                client.TcpClient.GetStream().Write(data, 0, data.Length);
-                            }
-                            else if (message == "[GetAllChatList]")
-                            {
-                                db.ChatRooms.Include(u => u.MembersArray).Load();
-                                string result = "ChatList:";
-                                foreach (ChatRoom c in db.ChatRooms)
-                                {
-                                    result += c.Name + ";";
-                                }
-                                byte[] data1 = Encoding.Unicode.GetBytes(result);
-                                client.TcpClient.GetStream().Write(data, 0, data.Length);
-                            }
-                            else if (message.Contains("[GetUserList]"))
-                            {
-                                db.ChatRooms.Include(u => u.MembersArray).Load();
-                                string result = "UserList:";
-
-                                chatRoomWorkers.Find((ChatRoomWorker w) => { return w.ChatRoom.Name == message.Replace("[GetUserList]", ""); }).AddNewActiveMember(client, chatRoomWorkers);
-                                foreach (ConnectedClient user in Clients)
-                                {
-                                    result += user.User.Login + "(online)" + ";";
-                                }
-                                foreach (ConnectedClient user in Clients)
-                                {
-                                    if (!Clients.Exists((ConnectedClient p) => { return p.User.UserId == user.User.UserId; }))
-                                        result += user.User.Login + "(offline)" + ";";
-                                }
-                                byte[] data0 = Encoding.Unicode.GetBytes(result);
-                                client.TcpClient.GetStream().Write(data0, 0, data0.Length);
-                            }
-                            else if (message == "[LeaveChat]")
-                            {
-                                var query = db.Users.Where(u => u.Login == client.User.Login);
-                                User user = query.First();
-                                user.ChatRooms.Remove(db.ChatRooms.Find(ChatRoom.ChatRoomId));
+                                //Create chat
+                                ChatRoom newChat = new ChatRoom();
+                                newChat.Name = message;
+                                db.ChatRooms.Add(newChat);
+                                newChat.MembersArray.Add(client.User);
                                 db.SaveChanges();
-                                RemoveActiveMember(client);
-                                Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " left " + ChatRoom.Name);
+                                ChatRoomWorker chatRoomWorker = new ChatRoomWorker(newChat);
+                                chatRoomWorkers.Add(chatRoomWorker);
+                                if (client.currentChatRoomWorker != null)
+                                    client.currentChatRoomWorker.RemoveActiveMember(client);
+                                Clients.Remove(client);
+                                chatRoomWorker.AddNewActiveMember(client, db, chatRoomWorkers);
+                                Console.WriteLine("[" + DateTime.Now.ToString() + "] " + "ChatRoom " + message + " created");
+                                Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " connected to " + message);
+                                Thread.CurrentThread.Abort();
                             }
-                            else if (!string.IsNullOrWhiteSpace(message))
+                        }
+                        else if (message == "[GetMyChatList]")
+                        {
+                            db.ChatRooms.Include(u => u.MembersArray).Load();
+                            db.Users.Include(u => u.ChatRooms).Load(); db.Users.Include(u => u.ChatRooms).Load();
+                            string result = "ChatList:";
+                            foreach (ChatRoom c in client.User.ChatRooms)
                             {
-                                if (message == "[Disconnect]")
-                                {
-                                    Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " disconnected");
-                                    Clients.Remove(client);
-                                    if (client.TcpClient.Connected)
-                                        client.TcpClient.GetStream().Dispose();
-                                    client.TcpClient.Dispose();
-                                    client.TcpClient.Close();
-                                    Thread.CurrentThread.Abort();
-                                }
-                                else
-                                {
-                                    SendToAll(message, client.User.Login);
-                                    Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " in " + ChatRoom.Name + ": " + message);
-                                }
+                                result += c.Name + ";";
+                            }
+                            byte[] data1 = Encoding.Unicode.GetBytes(result);
+                            client.TcpClient.GetStream().Write(data, 0, data.Length);
+                        }
+                        else if (message == "[GetAllChatList]")
+                        {
+                            db.ChatRooms.Include(u => u.MembersArray).Load();
+                            db.Users.Include(u => u.ChatRooms).Load();
+                            string result = "ChatList:";
+                            foreach (ChatRoom c in db.ChatRooms)
+                            {
+                                result += c.Name + ";";
+                            }
+                            byte[] data1 = Encoding.Unicode.GetBytes(result);
+                            client.TcpClient.GetStream().Write(data, 0, data.Length);
+                        }
+                        else if (message.Contains("[GetUserList]"))
+                        {
+                            db.ChatRooms.Include(u => u.MembersArray).Load();
+                            string result = "UserList:";
+
+                            //chatRoomWorkers.Find((ChatRoomWorker w) => { return w.ChatRoom.Name == message.Replace("[GetUserList]", ""); }).AddNewActiveMember(client, db, chatRoomWorkers);
+                            foreach (ConnectedClient user in Clients)
+                            {
+                                result += user.User.Login + "(online)" + ";";
+                            }
+                            foreach (ConnectedClient user in Clients)
+                            {
+                                if (!Clients.Exists((ConnectedClient p) => { return p.User.UserId == user.User.UserId; }))
+                                    result += user.User.Login + "(offline)" + ";";
+                            }
+                            byte[] data0 = Encoding.Unicode.GetBytes(result);
+                            client.TcpClient.GetStream().Write(data0, 0, data0.Length);
+                        }
+                        else if (message.Contains("[LeaveChat]"))
+                        {
+                            message = message.Replace("[LeaveChat]", "");
+                            var query = db.Users.Where(u => u.Login == client.User.Login);
+                            User user = query.First();
+                            user.ChatRooms.Remove(db.ChatRooms.Where(r => r.Name == message).First());
+                            db.SaveChanges();
+                            chatRoomWorkers.Where(p => p.ChatRoom.Name == message).First().RemoveActiveMember(client);
+                            Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " left " + db.ChatRooms.Where(r => r.Name == message).First().Name);
+                            db.Users.Include(u => u.ChatRooms).Load();
+                            db.ChatRooms.Include(u => u.MembersArray).Load();
+                        }
+                        else if (!string.IsNullOrWhiteSpace(message))
+                        {
+                            if (message == "[Disconnect]")
+                            {
+                                Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " disconnected");
+                                Clients.Remove(client);
+                                if (client.TcpClient.Connected)
+                                    client.TcpClient.GetStream().Dispose();
+                                client.TcpClient.Dispose();
+                                client.TcpClient.Close();
+                                Thread.CurrentThread.Abort();
+                            }
+                            else
+                            {
+                                SendToAll(message, client.User.Login);
+                                Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " in " + ChatRoom.Name + ": " + message);
                             }
                         }
                     }
+                    
                 }
                 catch (IOException)
                 {
@@ -194,7 +201,7 @@ namespace EasyChatServer
                     catch { }
                 }
                 catch (ThreadAbortException) { Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " disconnected from " + ChatRoom.Name); }
-                catch (Exception ex) { Console.WriteLine("[" + DateTime.Now.ToString() + "] " + ex.Message); }
+                //catch (Exception ex) { Console.WriteLine("[" + DateTime.Now.ToString() + "] " + ex.Message); }
             }).Start();
         }
         public void RemoveActiveMember(ConnectedClient client)
@@ -219,16 +226,17 @@ namespace EasyChatServer
                             Clients.Remove(c);
                         }
                     }
-                    using (DataContext db = new DataContext())
-                    {
-                        Message message = new Message();
-                        message.MessageText = messageText;
-                        message.Sender = db.Users.Where(p => p.Login == senderNick).First();
-                        message.ChatRoom = db.ChatRooms.Where(ch => ch.ChatRoomId == ChatRoom.ChatRoomId).First(); ;
-                        message.MessageTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
-                        db.Messages.Add(message);
-                        db.SaveChanges();
-                    }
+                    //Write message to db
+                    //using (DataContext db = new DataContext())
+                    //{
+                    //    Message message = new Message();
+                    //    message.MessageText = messageText;
+                    //    message.Sender = db.Users.Where(p => p.Login == senderNick).First();
+                    //    message.ChatRoom = db.ChatRooms.Where(ch => ch.ChatRoomId == ChatRoom.ChatRoomId).First(); ;
+                    //    message.MessageTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+                    //    db.Messages.Add(message);
+                    //    db.SaveChanges();
+                    //}
                 }
                 catch (Exception ex) { Console.WriteLine(ex.Message); }
         }).Start();

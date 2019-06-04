@@ -192,7 +192,7 @@ namespace EasyChat
                 {
                     if (mainForm.chatList1.ActiveButton != null)
                     {
-                        mainForm.serverConnection.SendMessage("[LeaveChat]");
+                        mainForm.serverConnection.SendMessage("[LeaveChat]" + mainForm.chatList1.ActiveButton.Text.Remove(0, 2));
                         mainForm.chatBox1.Clear();
                         mainForm.chatList1.Clear();
                         if (isListening)
@@ -200,6 +200,7 @@ namespace EasyChat
                             Disconnect();
                             Connect(false);
                         }
+                        Thread.Sleep(200);
                         foreach (string s in mainForm.serverConnection.ReciveMyChatListFromServer())
                         {
                             mainForm.chatList1.AddNewButton(s);
@@ -236,7 +237,8 @@ namespace EasyChat
                         builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
                     }
                     while (client.GetStream().DataAvailable);
-
+                    mainForm.serverConnection.SendMessage("ConnectChat:" + mainForm.chatList1.ActiveButton.Text.Remove(0, 2));
+                    mainForm.serverConnection.startListen();
                     string line = builder.ToString();
                     if (line != null && line.Contains("UserList:"))
                     {

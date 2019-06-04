@@ -82,5 +82,10 @@ namespace EasyChat
             usersForm.Location = new Point(620, 260);
             usersForm.Show();
         }
+
+        private void clearHistoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            chatBox1.Clear();
+        }
     }
 }

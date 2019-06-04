@@ -85,6 +85,7 @@ namespace EasyChat
         {
             MessageHistoryPanel.Controls.Clear();
             lastBubbleBottom = 0;
+            GC.Collect();
         }
 
             private void bunifuCustomTextbox1_Enter(object sender, EventArgs e)
