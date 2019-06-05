@@ -110,7 +110,7 @@ namespace EasyChat
                 ActiveButton = (BunifuFlatButton)sender;
                 ActiveButton.selected = true;
 
-                mainForm.serverConnection.SendMessage("ConnectChat:" + ActiveButton.Text.Remove(0, 2));
+                mainForm.serverConnection.SendMessage("[ConnectChat]:" + ActiveButton.Text.Remove(0, 2));
                 mainForm.chatBox1.Clear();
                 mainForm.serverConnection.startListen();
                 mainForm.onlineStatusImage.Image = Properties.Resources.online_icon_S;
@@ -122,7 +122,7 @@ namespace EasyChat
                     ActiveButton.selected = false;
                     ActiveButton = (BunifuFlatButton)sender;
                     ActiveButton.selected = true;
-                    mainForm.serverConnection.SendMessage("ConnectChat:" + ActiveButton.Text.Remove(0, 2));
+                    mainForm.serverConnection.SendMessage("[ConnectChat]:" + ActiveButton.Text.Remove(0, 2));
                     mainForm.chatBox1.Clear();
                     mainForm.serverConnection.startListen();
                     mainForm.onlineStatusImage.Image = Properties.Resources.online_icon_S;

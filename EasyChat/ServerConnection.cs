@@ -237,7 +237,7 @@ namespace EasyChat
                         builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
                     }
                     while (client.GetStream().DataAvailable);
-                    mainForm.serverConnection.SendMessage("ConnectChat:" + mainForm.chatList1.ActiveButton.Text.Remove(0, 2));
+                    mainForm.serverConnection.SendMessage("[ConnectChat]:" + mainForm.chatList1.ActiveButton.Text.Remove(0, 2));
                     mainForm.serverConnection.startListen();
                     string line = builder.ToString();
                     if (line != null && line.Contains("UserList:"))
