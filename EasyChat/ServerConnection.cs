@@ -149,7 +149,6 @@ namespace EasyChat
 
         public List<string> ReciveMyChatListFromServer()
         {
-            //Regex regex = new Regex(@"^ChatList:([a-zA-Z0-9]{1,24};)+");
             List<string> list = new List<string>();
             while (client.Connected)
             {

@@ -26,6 +26,9 @@ namespace EasyChatServer
         }
         public void AddNewActiveMember(ConnectedClient client, DataContext db, List<ChatRoomWorker> chatRoomWorkers)
         {
+            if(client.currentChatRoomWorker != null)
+                client.currentChatRoomWorker.RemoveActiveMember(client);
+
             new Thread(() =>
             {
                 try
@@ -154,15 +157,14 @@ namespace EasyChatServer
                             }
                             string result = "UserList:";
 
-                            //chatRoomWorkers.Find((ChatRoomWorker w) => { return w.ChatRoom.Name == message.Replace("[GetUserList]", ""); }).AddNewActiveMember(client, db, chatRoomWorkers);
                             foreach (ConnectedClient user in Clients)
                             {
                                 result += user.User.Login + "(online)" + ";";
                             }
-                            foreach (ConnectedClient user in Clients)
+                            foreach (User user in ChatRoom.MembersArray)
                             {
-                                if (!Clients.Exists((ConnectedClient p) => { return p.User.UserId == user.User.UserId; }))
-                                    result += user.User.Login + "(offline)" + ";";
+                                if (!Clients.Exists((ConnectedClient p) => { return p.User.UserId == user.UserId; }))
+                                    result += user.Login + "(offline)" + ";";
                             }
                             byte[] data0 = Encoding.Unicode.GetBytes(result);
                             client.TcpClient.GetStream().Write(data0, 0, data0.Length);
@@ -221,13 +223,14 @@ namespace EasyChatServer
                     }
                     catch { }
                 }
-                catch (ThreadAbortException) { Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " disconnected from " + ChatRoom.Name); }
-                catch (Exception ex) { Console.WriteLine("[" + DateTime.Now.ToString() + "] " + ex.Message); }
+                catch (ThreadAbortException) { Clients.Remove(client); }
+                catch (Exception ex) { Console.WriteLine("[" + DateTime.Now.ToString() + "] " + ex.Message); Clients.Remove(client); }
             }).Start();
         }
         public void RemoveActiveMember(ConnectedClient client)
         {
             Clients.Remove(client);
+            Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " disconnected from " + ChatRoom.Name);
         }
         public void SendToAll(string messageText, string senderNick)
         {
@@ -240,7 +243,6 @@ namespace EasyChatServer
                         if (c.TcpClient.Connected)
                         {
                             byte[] buffer = Encoding.Unicode.GetBytes(senderNick + '▶' + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + '▶' + messageText + '▶' + c.User.Photo);
-                            //byte[] buffer = Encoding.Unicode.GetBytes(senderNick + '▶' + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + '▶' + messageText + '▶' + "https://i.imgur.com/ovLOO8L.png");
                             c.TcpClient.GetStream().Write(buffer, 0, buffer.Length);
                         }
                         else

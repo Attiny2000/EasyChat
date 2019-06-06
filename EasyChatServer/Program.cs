@@ -31,7 +31,7 @@ namespace EasyChatServer
                 db.Users.Include(u => u.ChatRooms).Load();
                 db.ChatRooms.Include(u => u.MembersArray).Load();
                 db.Messages.Load();
-                //Chats creation;
+                //Chats creation
                 foreach (ChatRoom chat in db.ChatRooms)
                 {
                     ChatRoomWorker chatRoomWorker = new ChatRoomWorker(chat);
@@ -231,15 +231,14 @@ namespace EasyChatServer
                                 string result = "UserList:";
                                 List<ConnectedClient> Clients = chatRoomWorkers.Find((ChatRoomWorker w) => { return w.ChatRoom.Name == line.Replace("[GetUserList]", ""); }).Clients;
 
-                                //chatRoomWorkers.Find((ChatRoomWorker w) => { return w.ChatRoom.Name == line.Replace("[GetUserList]", ""); }).AddNewActiveMember(client, db, chatRoomWorkers);
                                 foreach (ConnectedClient user in Clients)
                                 {
                                     result += user.User.Login + "(online)" + ";";
                                 }
-                                foreach (ConnectedClient user in Clients)
+                                foreach (User user in db.ChatRooms.Where(c => c.Name == line.Replace("[GetUserList]", "")).First().MembersArray)
                                 {
-                                    if (!Clients.Exists((ConnectedClient p) => { return p.User.UserId == user.User.UserId; }))
-                                        result += user.User.Login + "(offline)" + ";";
+                                    if (!Clients.Exists((ConnectedClient p) => { return p.User.UserId == user.UserId; }))
+                                        result += user.Login + "(offline)" + ";";
                                 }
                                 byte[] data0 = Encoding.Unicode.GetBytes(result);
                                 client.TcpClient.GetStream().Write(data0, 0, data0.Length);
