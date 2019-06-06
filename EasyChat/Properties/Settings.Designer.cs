@@ -61,5 +61,17 @@ namespace EasyChat.Properties {
                 this["IP"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Photo {
+            get {
+                return ((string)(this["Photo"]));
+            }
+            set {
+                this["Photo"] = value;
+            }
+        }
     }
 }

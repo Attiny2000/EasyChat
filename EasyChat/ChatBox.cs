@@ -30,12 +30,12 @@ namespace EasyChat
             MessageHistoryPanel.VerticalScroll.Visible = true;
             MessageHistoryPanel.AutoScroll = true;
         }
-        public void AddNewIncomingMessage(string message, string time, string nick)
+        public void AddNewIncomingMessage(string message, string time, string nick, string photo)
         {
             this.Invoke((MethodInvoker)delegate {
                 lock ((object)lastBubbleBottom) {
                     ScrollToBottom();
-                    IncomingMessageBubble bubble = new IncomingMessageBubble(stringNormalize(message), time, nick);
+                    IncomingMessageBubble bubble = new IncomingMessageBubble(stringNormalize(message), time, nick, photo);
                     bubble.Location = new Point(3, lastBubbleBottom + 10);
                     bubble.Size = new Size(510, 68);
                     bubble.Anchor = (AnchorStyles.Top | AnchorStyles.Left);
@@ -45,13 +45,13 @@ namespace EasyChat
                 }
             });
         }
-        public void AddNewOutcomingMessage(string message, string time)
+        public void AddNewOutcomingMessage(string message, string time, string photo)
         {
             this.Invoke((MethodInvoker)delegate {
                 lock ((object)lastBubbleBottom)
                 {
                     ScrollToBottom();
-                    OutcomingMessageBubble bubble = new OutcomingMessageBubble(stringNormalize(message), time);
+                    OutcomingMessageBubble bubble = new OutcomingMessageBubble(stringNormalize(message), time, photo);
                     bubble.Location = new Point(3, lastBubbleBottom + 10);
                     bubble.Size = new Size(510, 68);
                     bubble.Anchor = (AnchorStyles.Top | AnchorStyles.Left);

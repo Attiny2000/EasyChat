@@ -56,7 +56,7 @@ namespace EasyChat
             else
             {
                 DialogResult res = MessageBox.Show("Chat room with this name does not exist. Do you want to create new chat room?", "Create new chat room?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if(res == DialogResult.Yes)
+                if (res == DialogResult.Yes)
                 {
                     chatList1.AddNewButton(bunifuMaterialTextbox1.Text);
                 }
@@ -86,6 +86,28 @@ namespace EasyChat
         private void clearHistoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             chatBox1.Clear();
+        }
+
+        private void bunifuMaterialTextbox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                chatBox1.Clear();
+                List<string> list = serverConnection.ReciveChatListFromServer();
+                if (list.Exists(s => s == bunifuMaterialTextbox1.Text))
+                {
+                    chatList1.AddNewButton(bunifuMaterialTextbox1.Text);
+                }
+                else
+                {
+                    DialogResult res = MessageBox.Show("Chat room with this name does not exist. Do you want to create new chat room?", "Create new chat room?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (res == DialogResult.Yes)
+                    {
+                        chatList1.AddNewButton(bunifuMaterialTextbox1.Text);
+                    }
+                }
+            }
+
         }
     }
 }

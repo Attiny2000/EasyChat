@@ -99,5 +99,15 @@ namespace EasyChat
         {
             bunifuMaterialTextbox2.isPassword = true;
         }
+
+        private void bunifuImageButton3_Click(object sender, EventArgs e)
+        {
+            //Settings
+            SettingsForm settingsForm = new SettingsForm();
+            settingsForm.LoginForm = this;
+            settingsForm.Show();
+            this.WindowState = FormWindowState.Minimized;
+            settingsForm.WindowState = FormWindowState.Normal;
+        }
     }
 }

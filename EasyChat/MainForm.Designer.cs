@@ -46,11 +46,11 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.leaveChatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearHistoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ChatsPanel = new System.Windows.Forms.Panel();
             this.chatList1 = new EasyChat.ChatList();
             this.panel1 = new System.Windows.Forms.Panel();
             this.chatBox1 = new EasyChat.ChatBox();
-            this.clearHistoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TopPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bunifuImageButton2)).BeginInit();
@@ -224,6 +224,7 @@
             this.bunifuMaterialTextbox1.TabIndex = 0;
             this.bunifuMaterialTextbox1.TabStop = false;
             this.bunifuMaterialTextbox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.bunifuMaterialTextbox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.bunifuMaterialTextbox1_KeyDown);
             // 
             // contextMenuStrip1
             // 
@@ -234,13 +235,13 @@
             this.clearHistoryToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.ShowImageMargin = false;
-            this.contextMenuStrip1.Size = new System.Drawing.Size(156, 92);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(135, 70);
             // 
             // leaveChatToolStripMenuItem
             // 
             this.leaveChatToolStripMenuItem.Name = "leaveChatToolStripMenuItem";
             this.leaveChatToolStripMenuItem.ShowShortcutKeys = false;
-            this.leaveChatToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.leaveChatToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.leaveChatToolStripMenuItem.Text = "Leave chat";
             this.leaveChatToolStripMenuItem.Click += new System.EventHandler(this.leaveChatToolStripMenuItem_Click);
             // 
@@ -248,9 +249,16 @@
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.ShowShortcutKeys = false;
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.settingsToolStripMenuItem.Text = "Users list";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
+            // 
+            // clearHistoryToolStripMenuItem
+            // 
+            this.clearHistoryToolStripMenuItem.Name = "clearHistoryToolStripMenuItem";
+            this.clearHistoryToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.clearHistoryToolStripMenuItem.Text = "Clear history";
+            this.clearHistoryToolStripMenuItem.Click += new System.EventHandler(this.clearHistoryToolStripMenuItem_Click);
             // 
             // ChatsPanel
             // 
@@ -287,13 +295,6 @@
             this.chatBox1.Name = "chatBox1";
             this.chatBox1.Size = new System.Drawing.Size(559, 410);
             this.chatBox1.TabIndex = 0;
-            // 
-            // clearHistoryToolStripMenuItem
-            // 
-            this.clearHistoryToolStripMenuItem.Name = "clearHistoryToolStripMenuItem";
-            this.clearHistoryToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
-            this.clearHistoryToolStripMenuItem.Text = "Clear history";
-            this.clearHistoryToolStripMenuItem.Click += new System.EventHandler(this.clearHistoryToolStripMenuItem_Click);
             // 
             // MainForm
             // 

@@ -70,6 +70,7 @@ namespace EasyChatServer
                         string line = builder.ToString();
                         string login = "";
                         string password = "";
+                        string photo = "";
                         if (!string.IsNullOrEmpty(line) && loginString.IsMatch(line))
                         {
                             if (line.Contains("[Registration]"))
@@ -79,12 +80,13 @@ namespace EasyChatServer
                                 string[] lp = line.Split(';');
                                 login = lp[0].Substring(lp[0].IndexOf("Login:") + 6);
                                 password = lp[1].Substring(lp[1].IndexOf("Password:") + 9);
+                                photo = lp[2].Substring(lp[2].IndexOf("Photo:") + 6);
                                 lock (db)
                                 {
                                     var query = db.Users.Where(p => p.Login == login);
                                     if (query.Count() == 0)
                                     {
-                                        User user = new User(login, password, "");
+                                        User user = new User(login, password, photo);
                                         client = new ConnectedClient(user, tcpClient);
                                         db.Users.Add(user);
                                         lock (db) { db.SaveChanges(); }
@@ -109,6 +111,7 @@ namespace EasyChatServer
                                 string[] lp = line.Split(';');
                                 login = lp[0].Substring(lp[0].IndexOf("Login:") + 6);
                                 password = lp[1].Substring(lp[1].IndexOf("Password:") + 9);
+                                photo = lp[2].Substring(lp[2].IndexOf("Photo:") + 6);
                                 try
                                 {
                                     lock (db)
@@ -117,6 +120,8 @@ namespace EasyChatServer
                                         User user = query.First();
                                         if (login == user.Login && password == user.Password)
                                         {
+                                            user.Photo = photo;
+                                            db.SaveChanges();
                                             byte[] data1 = Encoding.Unicode.GetBytes("Succes");
                                             tcpClient.GetStream().Write(data1, 0, data1.Length);
                                             client = new ConnectedClient(user, tcpClient);

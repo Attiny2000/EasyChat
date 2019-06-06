@@ -239,7 +239,8 @@ namespace EasyChatServer
                     {
                         if (c.TcpClient.Connected)
                         {
-                            byte[] buffer = Encoding.Unicode.GetBytes(senderNick + '▶' + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + '▶' + messageText);
+                            byte[] buffer = Encoding.Unicode.GetBytes(senderNick + '▶' + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + '▶' + messageText + '▶' + c.User.Photo);
+                            //byte[] buffer = Encoding.Unicode.GetBytes(senderNick + '▶' + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + '▶' + messageText + '▶' + "https://i.imgur.com/ovLOO8L.png");
                             c.TcpClient.GetStream().Write(buffer, 0, buffer.Length);
                         }
                         else

@@ -17,22 +17,23 @@ namespace EasyChat
         {
             InitializeComponent();
             //Circle photo
-            System.Drawing.Drawing2D.GraphicsPath gp = new System.Drawing.Drawing2D.GraphicsPath();
-            gp.AddEllipse(0, 0, pictureBox1.Width - 3, pictureBox1.Height - 3);
-            Region rg = new Region(gp);
-            pictureBox1.Region = rg;
+            //System.Drawing.Drawing2D.GraphicsPath gp = new System.Drawing.Drawing2D.GraphicsPath();
+            //gp.AddEllipse(0, 0, pictureBox1.Width - 3, pictureBox1.Height - 3);
+            //Region rg = new Region(gp);
+            //pictureBox1.Region = rg;
         }
-        public OutcomingMessageBubble(string message,string time)
+        public OutcomingMessageBubble(string message, string time, string photo)
         {
             InitializeComponent();
             //Circle photo
-            System.Drawing.Drawing2D.GraphicsPath gp = new System.Drawing.Drawing2D.GraphicsPath();
-            gp.AddEllipse(0, 0, pictureBox1.Width - 3, pictureBox1.Height - 3);
-            Region rg = new Region(gp);
-            pictureBox1.Region = rg;
+            //System.Drawing.Drawing2D.GraphicsPath gp = new System.Drawing.Drawing2D.GraphicsPath();
+            //gp.AddEllipse(0, 0, pictureBox1.Width - 3, pictureBox1.Height - 3);
+            //Region rg = new Region(gp);
+            //pictureBox1.Region = rg;
 
             MessageLabel.Text = message;
             TimeLablel.Text = time;
+            pictureBox1.ImageLocation = photo;
 
             SetHeight();
         }

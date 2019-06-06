@@ -20,6 +20,7 @@ namespace EasyChat
         public int Port;
         public string Nick;
         public string Password;
+        public string Photo;
         private bool isListening = false;
         private Task listeningTask;
         private MainForm mainForm;
@@ -31,6 +32,7 @@ namespace EasyChat
             Nick = nick;
             Password = password;
             mainForm = form;
+            Photo = Properties.Settings.Default.Photo;
         }
 
         public bool Connect(bool isRegistration)
@@ -44,12 +46,12 @@ namespace EasyChat
                         client.Connect(IP, Port);
                         if (isRegistration)
                         {
-                            byte[] data = Encoding.Unicode.GetBytes($"[Registration]Login:{Nick};Password:{Password};");
+                            byte[] data = Encoding.Unicode.GetBytes($"[Registration]Login:{Nick};Password:{Password};Photo:{Photo}");
                             client.GetStream().Write(data, 0, data.Length);
                         }
                         else
                         {
-                            byte[] data = Encoding.Unicode.GetBytes($"[Login]Login:{Nick};Password:{Password};");
+                            byte[] data = Encoding.Unicode.GetBytes($"[Login]Login:{Nick};Password:{Password};Photo:{Photo}");
                             client.GetStream().Write(data, 0, data.Length);
                         }
 
@@ -129,11 +131,11 @@ namespace EasyChat
                                     string[] s = message.Split('▶');
                                     if (s[0] == Nick)
                                     {
-                                        mainForm.chatBox1.AddNewOutcomingMessage(s[2], s[1]);
+                                        mainForm.chatBox1.AddNewOutcomingMessage(s[2], s[1], s[3]);
                                     }
                                     else
                                     {
-                                        mainForm.chatBox1.AddNewIncomingMessage(s[2], s[1], s[0]);
+                                        mainForm.chatBox1.AddNewIncomingMessage(s[2], s[1], s[0], s[3]);
                                     }
                                 }
                             }
@@ -200,7 +202,6 @@ namespace EasyChat
                             Disconnect();
                             Connect(false);
                         }
-                        Thread.Sleep(200);
                         foreach (string s in mainForm.serverConnection.ReciveMyChatListFromServer())
                         {
                             mainForm.chatList1.AddNewButton(s);
