@@ -38,11 +38,11 @@ namespace EasyChat
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Regex reg = new Regex(@"\b\d{ 1, 3 }\.\d{ 1,3}\.\d{ 1,3}\.\d{ 1,3}\b");
-            if(reg.IsMatch(bunifuMaterialTextbox1.Text))
             Properties.Settings.Default.IP = bunifuMaterialTextbox1.Text;
 
             Properties.Settings.Default.Photo = bunifuMaterialTextbox2.Text;
+
+            Properties.Settings.Default.Save();
 
             try { LoginForm.WindowState = FormWindowState.Normal; } catch { }
             this.Close();
