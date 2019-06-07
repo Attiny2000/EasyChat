@@ -201,7 +201,7 @@ namespace EasyChatServer
                             }
                             else
                             {
-                                SendToAll(message, client.User.Login);
+                                SendToAll(message, client);
                                 Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " in " + ChatRoom.Name + ": " + message);
                             }
                         }
@@ -232,7 +232,7 @@ namespace EasyChatServer
             Clients.Remove(client);
             Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " disconnected from " + ChatRoom.Name);
         }
-        public void SendToAll(string messageText, string senderNick)
+        public void SendToAll(string messageText, ConnectedClient sender)
         {
             new Thread(() =>
             {
@@ -242,7 +242,7 @@ namespace EasyChatServer
                     {
                         if (c.TcpClient.Connected)
                         {
-                            byte[] buffer = Encoding.Unicode.GetBytes(senderNick + '▶' + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + '▶' + messageText + '▶' + c.User.Photo);
+                            byte[] buffer = Encoding.Unicode.GetBytes(sender.User.Login + '▶' + DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + '▶' + messageText + '▶' + sender.User.Photo);
                             c.TcpClient.GetStream().Write(buffer, 0, buffer.Length);
                         }
                         else

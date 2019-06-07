@@ -47,7 +47,7 @@ namespace EasyChat
         }
         public void AddNewOutcomingMessage(string message, string time, string photo)
         {
-            this.Invoke((MethodInvoker)delegate {
+                this.Invoke((MethodInvoker)delegate {
                 lock ((object)lastBubbleBottom)
                 {
                     ScrollToBottom();
