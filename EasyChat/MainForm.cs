@@ -109,5 +109,23 @@ namespace EasyChat
             }
 
         }
+
+        private void saveHistoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!Directory.Exists("Saved chat histories"))
+                    Directory.CreateDirectory("Saved chat histories");
+
+                string fileName = "Saved chat histories\\Messages history " + DateTime.Now.ToString("dd-MM-yyyy(HH-mm-ss)") + ".txt";
+                foreach (string m in chatBox1.messagesHistory)
+                {
+                    File.AppendAllText(fileName, m + Environment.NewLine);
+                }
+
+                MessageBox.Show("Chat history has been saved", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+        }
     }
 }

@@ -16,6 +16,7 @@ namespace EasyChat
     {
         MainForm mainForm;
         int lastBubbleBottom = 0;
+        public List<string> messagesHistory = new List<string>();
 
         public ChatBox()
         {
@@ -42,12 +43,14 @@ namespace EasyChat
                     MessageHistoryPanel.Controls.Add(bubble);
                     ScrollToBottom();
                     lastBubbleBottom = bubble.Location.Y + bubble.Height;
+                    messagesHistory.Add($"{nick}: {message}");
                 }
             });
         }
         public void AddNewOutcomingMessage(string message, string time, string photo)
         {
-                this.Invoke((MethodInvoker)delegate {
+            this.Invoke((MethodInvoker)delegate
+            {
                 lock ((object)lastBubbleBottom)
                 {
                     ScrollToBottom();
@@ -59,6 +62,7 @@ namespace EasyChat
                     MessageHistoryPanel.Controls.Add(bubble);
                     ScrollToBottom();
                     lastBubbleBottom = bubble.Location.Y + bubble.Height;
+                    messagesHistory.Add("You: " + message);
                 }
             });
         }
@@ -85,6 +89,7 @@ namespace EasyChat
         {
             MessageHistoryPanel.Controls.Clear();
             lastBubbleBottom = 0;
+            messagesHistory.Clear();
             GC.Collect();
         }
 
