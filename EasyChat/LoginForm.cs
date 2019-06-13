@@ -22,7 +22,7 @@ namespace EasyChat
         {
             if (string.IsNullOrWhiteSpace(Properties.Settings.Default.IP))
             {
-                Properties.Settings.Default.IP = "176.67.27.69";
+                Properties.Settings.Default.IP = "127.0.0.1";
                 Properties.Settings.Default.Save();
             }
             if (!(string.IsNullOrWhiteSpace(Properties.Settings.Default.Login)) && !(string.IsNullOrWhiteSpace(Properties.Settings.Default.Password)))

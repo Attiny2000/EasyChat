@@ -11,11 +11,13 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using Bunifu.Framework.UI;
+using System.Text.RegularExpressions;
 
 namespace EasyChat
 {
     public partial class MainForm : Form
     {
+        static Regex Chat = new Regex(@"^[a-zA-Zа-яА-Я0-9]{1,24}$");
         public ServerConnection serverConnection = null;
         public MainForm()
         {
@@ -47,20 +49,25 @@ namespace EasyChat
         private void bunifuImageButton3_Click(object sender, EventArgs e)
         {
             //Add chat
-            chatBox1.Clear();
-            List<string> list = serverConnection.ReciveChatListFromServer();
-            if (list.Exists(s => s == bunifuMaterialTextbox1.Text))
+            if (Chat.IsMatch(bunifuMaterialTextbox1.Text))
             {
-                chatList1.AddNewButton(bunifuMaterialTextbox1.Text);
-            }
-            else
-            {
-                DialogResult res = MessageBox.Show("Chat room with this name does not exist. Do you want to create new chat room?", "Create new chat room?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (res == DialogResult.Yes)
+                chatBox1.Clear();
+                bunifuCustomLabel1.Text = "Chatroom name";
+                List<string> list = serverConnection.ReciveChatListFromServer();
+                if (list.Exists(s => s == bunifuMaterialTextbox1.Text))
                 {
                     chatList1.AddNewButton(bunifuMaterialTextbox1.Text);
                 }
+                else
+                {
+                    DialogResult res = MessageBox.Show("Chat room with this name does not exist. Do you want to create new chat room?", "Create new chat room?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (res == DialogResult.Yes)
+                    {
+                        chatList1.AddNewButton(bunifuMaterialTextbox1.Text);
+                    }
+                }
             }
+            else { MessageBox.Show("Incorrect chat name!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -92,20 +99,25 @@ namespace EasyChat
         {
             if (e.KeyCode == Keys.Enter)
             {
-                chatBox1.Clear();
-                List<string> list = serverConnection.ReciveChatListFromServer();
-                if (list.Exists(s => s == bunifuMaterialTextbox1.Text))
+                if (Chat.IsMatch(bunifuMaterialTextbox1.Text))
                 {
-                    chatList1.AddNewButton(bunifuMaterialTextbox1.Text);
-                }
-                else
-                {
-                    DialogResult res = MessageBox.Show("Chat room with this name does not exist. Do you want to create new chat room?", "Create new chat room?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                    if (res == DialogResult.Yes)
+                    chatBox1.Clear();
+                    bunifuCustomLabel1.Text = "Chatroom name";
+                    List<string> list = serverConnection.ReciveChatListFromServer();
+                    if (list.Exists(s => s == bunifuMaterialTextbox1.Text))
                     {
                         chatList1.AddNewButton(bunifuMaterialTextbox1.Text);
                     }
+                    else
+                    {
+                        DialogResult res = MessageBox.Show("Chat room with this name does not exist. Do you want to create new chat room?", "Create new chat room?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                        if (res == DialogResult.Yes)
+                        {
+                            chatList1.AddNewButton(bunifuMaterialTextbox1.Text);
+                        }
+                    }
                 }
+                else { MessageBox.Show("Incorrect chat name!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
             }
 
         }

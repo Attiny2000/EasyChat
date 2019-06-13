@@ -193,6 +193,7 @@ namespace EasyChat
                 {
                     if (mainForm.chatList1.ActiveButton != null)
                     {
+                        mainForm.bunifuCustomLabel1.Text = "Chatroom name";
                         mainForm.serverConnection.SendMessage("[LeaveChat]" + mainForm.chatList1.ActiveButton.Text.Remove(0, 2));
                         mainForm.chatBox1.Clear();
                         mainForm.chatList1.Clear();

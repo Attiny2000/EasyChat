@@ -113,6 +113,7 @@ namespace EasyChat
                 mainForm.serverConnection.SendMessage("[ConnectChat]:" + ActiveButton.Text.Remove(0, 2));
                 mainForm.chatBox1.Clear();
                 mainForm.serverConnection.startListen();
+                mainForm.bunifuCustomLabel1.Text = ActiveButton.Text.Remove(0, 2);
                 mainForm.onlineStatusImage.Image = Properties.Resources.online_icon_S;
             }
             else
@@ -125,6 +126,7 @@ namespace EasyChat
                     mainForm.serverConnection.SendMessage("[ConnectChat]:" + ActiveButton.Text.Remove(0, 2));
                     mainForm.chatBox1.Clear();
                     mainForm.serverConnection.startListen();
+                    mainForm.bunifuCustomLabel1.Text = ActiveButton.Text.Remove(0, 2);
                     mainForm.onlineStatusImage.Image = Properties.Resources.online_icon_S;
                 }
             }
