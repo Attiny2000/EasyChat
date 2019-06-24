@@ -21,7 +21,7 @@ namespace EasyChatServer
         static List<ChatRoomWorker> chatRoomWorkers = new List<ChatRoomWorker>();
         static TcpListener listener = new TcpListener(IPAddress.Any, 5050);
         static Regex loginString = new Regex(@"Login:[a-zA-Z0-9]{1,24};Password:[a-zA-Z0-9]{1,24};");
-        static Regex selectChatString = new Regex(@"^\[ConnectChat\]:[a-zA-Zа-яА-Я0-9]{1,24}$");
+        static Regex selectChatString = new Regex(@"^\[ConnectChat\]:[a-zA-Zа-яА-Я0-9 ]{1,24}$");
         public static void Main(string[] args)
         {
             try

@@ -17,7 +17,7 @@ namespace EasyChat
 {
     public partial class MainForm : Form
     {
-        static Regex Chat = new Regex(@"^[a-zA-Zа-яА-Я0-9]{1,24}$");
+        static Regex Chat = new Regex(@"^[a-zA-Zа-яА-Я0-9 ]{1,24}$");
         public ServerConnection serverConnection = null;
         public MainForm()
         {
@@ -86,7 +86,8 @@ namespace EasyChat
             ActiveUsersForm usersForm = new ActiveUsersForm();
             usersForm.mainForm = this;
             usersForm.StartPosition = FormStartPosition.Manual;
-            usersForm.Location = new Point(620, 260);
+            usersForm.Location = new Point(this.Location.X + 250, this.Location.Y + 100);
+            //usersForm.Location = new Point(620, 260);
             usersForm.Show();
         }
 

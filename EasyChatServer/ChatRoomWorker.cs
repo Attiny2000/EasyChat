@@ -17,7 +17,7 @@ namespace EasyChatServer
     {
         public ChatRoom ChatRoom { get; }
         public List<ConnectedClient> Clients { get; }
-        Regex selectChatString = new Regex(@"^\[ConnectChat\]:[a-zA-Zа-яА-Я0-9]{1,24}$");
+        Regex selectChatString = new Regex(@"^\[ConnectChat\]:[a-zA-Zа-яА-Я0-9 ]{1,24}$");
 
         public ChatRoomWorker(ChatRoom chatRoom)
         {
@@ -201,7 +201,7 @@ namespace EasyChatServer
                             }
                             else
                             {
-                                SendToAll(message, client);
+                                SendToAll(message, client, db);
                                 Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " in " + ChatRoom.Name + ": " + message);
                             }
                         }
@@ -232,7 +232,7 @@ namespace EasyChatServer
             Clients.Remove(client);
             Console.WriteLine("[" + DateTime.Now.ToString() + "] " + client.User.Login + " disconnected from " + ChatRoom.Name);
         }
-        public void SendToAll(string messageText, ConnectedClient sender)
+        public void SendToAll(string messageText, ConnectedClient sender, DataContext db)
         {
             new Thread(() =>
             {
@@ -251,16 +251,16 @@ namespace EasyChatServer
                         }
                     }
                     //Write message to db
-                    //using (DataContext db = new DataContext())
-                    //{
-                    //    Message message = new Message();
-                    //    message.MessageText = messageText;
-                    //    message.Sender = db.Users.Where(p => p.Login == senderNick).First();
-                    //    message.ChatRoom = db.ChatRooms.Where(ch => ch.ChatRoomId == ChatRoom.ChatRoomId).First(); ;
-                    //    message.MessageTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
-                    //    db.Messages.Add(message);
-                    //    lock(db){db.SaveChanges();}
-                    //}
+                    lock (db)
+                    {
+                        Message message = new Message();
+                        message.MessageText = messageText;
+                        message.Sender = db.Users.Where(p => p.Login == sender.User.Login).First();
+                        message.ChatRoom = db.ChatRooms.Where(ch => ch.ChatRoomId == ChatRoom.ChatRoomId).First(); ;
+                        message.MessageTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+                        db.Messages.Add(message);
+                        db.SaveChanges();
+                    }
                 }
                 catch (Exception ex) { Console.WriteLine(ex.Message); }
             }).Start();
